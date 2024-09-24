@@ -29,7 +29,28 @@ This section describes the features of the application.
 > _Provide a simple description of the Minimum Viable Product._
 
 ### MVP Features
->  _Provide a list of top-level Epics and/or Stories of the MVP._
+>  MVP Features for Students:
+User Authentication:
+
+Sign Up (User Story 1): Allows students to create an account.
+Log In (User Story 2): Allows students to securely access their account.
+Password Reset (User Story 3): Allows students to recover their accounts if they forget their password.
+Homework Management:
+
+Add New Homework Assignments (User Story 4): Students can add new tasks and track them.
+Set Due Dates for Assignments (User Story 5): Students can specify deadlines to manage their time.
+Mark Assignments as Completed (User Story 8): Helps students track their progress by marking tasks as done.
+Categorization & Organization:
+
+Categorize Homework by Subject (User Story 7): Allows students to organize tasks by subject for better clarity.
+View Calendar of Assignments (User Story 9): Displays all homework on a calendar view, helping students see their workload at a glance.
+Priority & Focus:
+
+Set Priority Levels (User Story 11): Enables students to mark important tasks for better time management.
+MVP Features for Administrators:
+User Account Management (User Story 14): Administrators can manage student accounts, including creating, editing, and deleting accounts.
+
+Basic Reporting (User Story 15): Ability to generate simple reports on homework completion rates to track student performance.
 
 
 ## Architecture and Design
