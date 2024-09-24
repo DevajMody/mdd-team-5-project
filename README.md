@@ -9,14 +9,16 @@
 ## Team Information
 * Team name: TEAMNAME
 * Team members
-  * MEMBER1
+  * Uzair Mukadam (umm7905)
   * MEMBER2
   * MEMBER3
   * MEMBER4
 
 ## Executive Summary
 
-This is a summary of the project.
+Homework Tracking is a web application built used to assist students in managing their weekly homework assignments. The primary users of this application are students, who can easily add and organize their homework tasks.
+
+Many students often feel overwhelmed by their weekly workload, which can lead to missed assignments and potential mark deductions. This application offers a convenient solution for students to keep track of all their homework, helping them avoid unnecessary point losses and stay on top of their academic responsibilities.
 
 
 ## Requirements
