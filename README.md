@@ -10,7 +10,7 @@
 * Team name: TEAMNAME
 * Team members
   * Uzair Mukadam (umm7905)
-  * MEMBER2
+  * Jahnavi Kaja (jk4266)
   * MEMBER3
   * MEMBER4
 
