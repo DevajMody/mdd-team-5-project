@@ -29,28 +29,17 @@ This section describes the features of the application.
 The Minimum Viable Product (MVP) for the Homework Tracking app is a simple version of the app that lets students create accounts, log in, and manage their homework. It will allow students to add new homework, set due dates, organize tasks by subject, and mark them as done. There will also be a basic admin feature for managing student accounts. The goal is to make sure the main functions work to help students keep track of their homework without missing deadlines.
 
 ### MVP Features
->  MVP Features for Students:
-> User Authentication:
-* Sign Up (User Story 1): Allows students to create an account.
-* Log In (User Story 2): Allows students to securely access their account.
-* Password Reset (User Story 3): Allows students to recover their accounts if they forget their password.
-  
->Homework Management:
-* Add New Homework Assignments (User Story 4): Students can add new tasks and track them.
-* Set Due Dates for Assignments (User Story 5): Students can specify deadlines to manage their time.
-* Mark Assignments as Completed (User Story 8): Helps students track their progress by marking tasks as done.
+### User Authentication:
+* Sign Up: Allows students to create an account.
+* Log In: Allows students to securely access their account.
+* Password Change: Allows students to change their account password.
 
->Categorization & Organization:
-*Categorize Homework by Subject (User Story 7): Allows students to organize tasks by subject for better clarity.
-*View Calendar of Assignments (User Story 9): Displays all homework on a calendar view, helping students see their workload at a glance.
-
->Priority & Focus:
-* Set Priority Levels (User Story 11): Enables students to mark important tasks for better time management.
-
->MVP Features for Administrators:
-*User Account Management (User Story 14): Administrators can manage student accounts, including creating, editing, and deleting accounts.
-*Basic Reporting (User Story 15): Ability to generate simple reports on homework completion rates to track student performance.
-
+### Homework Management:
+* Add New Homework Assignments: Students can add new tasks and track them.
+* Set Due Dates for Assignments: Students can specify deadlines to manage their time.
+* Mark Assignments as Completed: Helps students track their progress by marking tasks as done.
+* Categorize Homework by Subject: Allows students to organize tasks by subject for better clarity.
+* View Calendar of Assignments: Displays all homework on a calendar view, helping students see their workload at a glance.
 
 ## Architecture and Design
 
