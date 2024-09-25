@@ -12,7 +12,7 @@
   * Uzair Mukadam (umm7905)
   * Jahnavi Kaja (jk4266)
   * Devaj Mody (dm9395)
-  * MEMBER4
+  * Shridhar Vilas Shinde (ss7536)
 
 ## Executive Summary
 
