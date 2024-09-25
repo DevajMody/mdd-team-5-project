@@ -26,7 +26,7 @@ Many students often feel overwhelmed by their weekly workload, which can lead to
 This section describes the features of the application.
 
 ### Definition of MVP
-The Minimum Viable Product (MVP) for the Homework Tracking app is a simple version of the app that lets students create accounts, log in, and manage their homework. It will allow students to add new homework, set due dates, organize tasks by subject, and mark them as done. There will also be a basic admin feature for managing student accounts. The goal is to make sure the main functions work to help students keep track of their homework without missing deadlines.
+The Minimum Viable Product (MVP) for our Homework Tracking app focuses on providing students with a basic tool to manage their weekly assignments. In this version, students can sign up, log in, add new homework tasks, assign due dates, categorize tasks by subject, and mark them as completed. A simple calendar view helps students see all their homework in one place. Admins will have basic account management functions like creating and managing student accounts. This MVP aims to help students stay organized and avoid missing homework deadlines.
 
 ### MVP Features
 ### User Authentication:
