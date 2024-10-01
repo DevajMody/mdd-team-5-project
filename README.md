@@ -75,6 +75,79 @@ Admin-related use case:
 
 - Manage Accounts: Admins can create and manage student accounts, including tasks such as creating new accounts, resetting passwords, or deactivating accounts if necessary.
 
+### Acceptance Criteria
+
+- **User Story** : As a student, I want to create an account so that I can start tracking my homework.
+
+  - **Acceptance criteria**:
+    - Users must be able to create an account using a valid email address and password
+    - Password must be at least 8 characters long and contain at least one number and one special character
+    - System should display an error message if the email is already registered
+    - Upon successful registration, users should receive a confirmation email
+
+- **User Story** : As a student, I want to log into my account so that I can access my homework information.
+
+  - **Acceptance criteria**:
+    - Users should be able to log in using their registered email and password
+    - System should display an error message for incorrect credentials
+    - Users should be redirected to their dashboard upon successful login
+    - A "Forgot Password" option should be available on the login page
+
+- **User Story** : As a student, I want to change my password so that I can keep my account secure.
+
+  - **Acceptance criteria**:
+    - Users must be able to change their password while logged in
+    - System should require users to enter their current password before setting a new one
+    - Users should receive an email notification when their password is changed
+    - The new password must be different from the current password
+
+- **User Story** : As a student, I want to add new homework assignments so that I can keep track of my tasks.
+
+  - **Acceptance criteria**:
+    - Users must be able to create a new homework assignment with a title and description
+    - Each homework entry must have a required subject field
+    - System should automatically save the creation date and time for each assignment
+    - Users should be able to set a priority level for each assignment (High, Medium, Low)
+
+- **User Story** : As a student, I want to set due dates for my assignments so that I can manage my time effectively.
+
+  - **Acceptance criteria**:
+    - Users must be able to set a due date for each homework assignment
+    - System should prevent setting due dates in the past
+    - Users should receive a warning if they set a due date less than 24 hours in the future
+    - Due dates should be displayed in a clear, consistent format throughout the application
+
+- **User Story** : As a student, I want to mark assignments as completed so that I can track my progress.
+
+  - **Acceptance criteria**:
+    - Users should be able to mark any homework assignment as completed
+    - Completed assignments should be visually distinct from incomplete ones
+    - System should record the completion date when an assignment is marked as done
+    - Users should have the option to unmark completed assignments if needed
+
+- **User Story** : As a student, I want to categorize my homework by subject so that I can organize my assignments better.
+
+  - **Acceptance criteria**:
+    - Users must be able to select from a predefined list of common subjects
+    - Users should have the option to create custom subject categories
+    - System should allow filtering homework assignments by subject
+    - Each subject should have a distinct color coding for easy visual identification
+
+- **User Story** : As a student, I want to view a calendar of my assignments so that I can plan my study schedule.
+
+  - **Acceptance criteria**:
+    - Calendar should display all homework assignments on their respective due dates
+    - Users should be able to toggle between daily, weekly, and monthly calendar views
+    - Clicking on a calendar entry should show the full details of the homework assignment
+    - Calendar should use color coding to differentiate assignments by subject
+
+- **User Story** : As an admin, I want to manage user accounts so that I can ensure proper system usage.
+  - **Acceptance criteria**:
+    - Admins should be able to view a list of all registered users
+    - Admins must be able to deactivate user accounts when necessary
+    - System should provide admins with the ability to reset user passwords
+    - Admins should be able to see basic usage statistics for each user account
+
 ### Class Diagram
 
 > _Place a class diagram here._ > _Describe your class diagram._
