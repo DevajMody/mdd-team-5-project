@@ -1,10 +1,5 @@
 # PROJECT Design Documentation
 
-> _The following template provides the headings for your Design
-> Documentation. As you edit each section make sure you remove these
-> commentary 'blockquotes'; the lines that start with a > character
-> and appear in the generated PDF in italics._
-
 ## Team Information
 
 - Team name: TEAMNAME
@@ -148,6 +143,6 @@ Admin-related use case:
     - System should provide admins with the ability to reset user passwords
     - Admins should be able to see basic usage statistics for each user account
 
-### Class Diagram
+### Domain Model Diagram
 
-> _Place a class diagram here._ > _Describe your class diagram._
+![Domain Model Diagram](images/domain_model_diagram.jpg)
