@@ -151,3 +151,7 @@ Admin-related use case:
 ### Class Diagram
 
 > _Place a class diagram here._ > _Describe your class diagram._
+
+### Sequence Diagram
+
+> Sequence Diagrams in images folder starting with "sequence_"
