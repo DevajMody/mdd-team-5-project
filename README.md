@@ -145,12 +145,31 @@ Admin-related use case:
 
 ### Domain Model Diagram
 
-<<<<<<< HEAD
-> _Place a class diagram here._ > _Describe your class diagram._
+![Use Case Diagram](images/domain_model_diagram.jpg)
+
 
 ### Sequence Diagram
 
-> Sequence Diagrams in images folder starting with "sequence_"
-=======
-![Domain Model Diagram](images/domain_model_diagram.jpg)
->>>>>>> 522746fedd60cb4de6051c29d04b85c3363262c7
+- sign-up sequence diagram
+![Use Case Diagram](images/sequence_Sign-up.png)
+
+- login sequence diagram
+![Use Case Diagram](images/sequence_login.png)
+
+- change password sequence diagram
+![Use Case Diagram](images/sequence_change_password.png)
+
+- add assignment sequence diagram
+![Use Case Diagram](images/sequence_add_assignment.png)
+
+- set homework category sequence diagram
+![Use Case Diagram](images/sequence_Categorize_by_subject.png)
+
+- set homework due-date sequence diagram
+![Use Case Diagram](images/sequence_Set_due_date.png)
+
+- mark assignment complete sequence diagram
+![Use Case Diagram](images/sequence_mark_assignment_as_completed.png)
+
+- view assignment calendar sequence diagram
+![Use Case Diagram](images/sequence_view_calendar_of_assignments.png)
