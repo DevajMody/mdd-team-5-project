@@ -179,3 +179,7 @@ Admin-related use case:
 - For our project, we've chosen the Model-View-Controller (MVC) architecture. This approach allows us to break down the application into distinct, manageable components, which simplifies maintenance and enhances organization. By separating these components, we can work on different parts of the application simultaneously, improving efficiency and fostering parallel development.
   
 ![Use Case Diagram](images/software_architecture_diagram.png)
+
+### Class Diagram
+  
+![Use Case Diagram](images/class_diagram.png)
