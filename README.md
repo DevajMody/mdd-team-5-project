@@ -145,12 +145,9 @@ Admin-related use case:
 
 ### Domain Model Diagram
 
-<<<<<<< HEAD
 > _Place a class diagram here._ > _Describe your class diagram._
 
 ### Sequence Diagram
 
 > Sequence Diagrams in images folder starting with "sequence_"
-=======
 ![Domain Model Diagram](images/domain_model_diagram.jpg)
->>>>>>> 522746fedd60cb4de6051c29d04b85c3363262c7
