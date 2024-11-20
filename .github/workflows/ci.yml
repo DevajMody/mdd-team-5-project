@@ -52,5 +52,7 @@ jobs:
           sleep 3
 
       - name: Run unit tests
+        env:
+          POSTGRES_HOST: 127.0.0.1
         run: |
           python3 -m unittest discover -v
