@@ -2,7 +2,9 @@ name: Python CI
 
 on:
   push:
-    branches: [umm7905_dev]
+    branches: [umm7905_dev, main]
+  pull_request:
+    branches: [main]
 
 jobs:
   test:

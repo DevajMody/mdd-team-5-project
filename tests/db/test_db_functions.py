@@ -41,7 +41,7 @@ class TestHomeworkManager(unittest.TestCase):
     def test_create_homework(self):
         """Test creating a homework"""
         homework_id = create_homework(
-            self.user3_id, "Design DB schema", "Insert test data"
+            self.user3_id, "Design DB schema", "Insert test data", "2024-12-01T12:00:00"  # Added due_date field
         )
         self.assertIsNotNone(homework_id, "Create homework should return a homework ID")
 

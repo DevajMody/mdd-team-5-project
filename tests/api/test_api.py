@@ -76,6 +76,7 @@ class TestHomeworkManager(unittest.TestCase):
             "user_id": user_id,
             "title": "Test Homework",
             "description": "This is a test homework",
+            "due_date": "2024-12-01T12:00:00"  # Added due_date field
         }
         homework_response = post_rest_call(
             self, "http://localhost:8001/homework", json=new_homework, expected_code=201
@@ -154,6 +155,7 @@ class TestHomeworkManager(unittest.TestCase):
             "user_id": user_id,
             "title": "Test Homework",
             "description": "This is a test homework",
+            "due_date": "2024-12-01T12:00:00"  # Added due_date field
         }
         homework_response = post_rest_call(
             self, "http://localhost:8001/homework", json=new_homework, expected_code=201
@@ -187,6 +189,7 @@ class TestHomeworkManager(unittest.TestCase):
             "user_id": user_id,
             "title": "Test Homework",
             "description": "This is a test homework",
+            "due_date": "2024-12-01T12:00:00"  # Added due_date field
         }
         homework_response = post_rest_call(
             self, "http://localhost:8001/homework", json=new_homework, expected_code=201
