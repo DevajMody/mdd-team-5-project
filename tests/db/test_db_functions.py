@@ -18,10 +18,14 @@ class TestHomeworkManager(unittest.TestCase):
 
         # Create homework for users
         self.homework1_id = create_homework(
-            self.user1_id, "Create repo", "Push db connector code"
+            self.user1_id, "Create repo", "Push db connector code", "2024-12-01T12:00:00"
         )
-        self.homework2_id = create_homework(self.user1_id, "Setup database", "Make tables")
-        self.homework3_id = create_homework(self.user2_id, "Setup API base", "Make routes")
+        self.homework2_id = create_homework(
+            self.user1_id, "Setup database", "Make tables", "2024-12-05T12:00:00"
+        )
+        self.homework3_id = create_homework(
+            self.user2_id, "Setup API base", "Make routes", "2024-12-10T12:00:00"
+        )
 
     def test_signup(self):
         """Test user signup"""
@@ -37,7 +41,7 @@ class TestHomeworkManager(unittest.TestCase):
     def test_create_homework(self):
         """Test creating a homework"""
         homework_id = create_homework(
-            self.user3_id, "Design DB schema", "Insert test data"
+            self.user3_id, "Design DB schema", "Insert test data", "2024-12-01T12:00:00"  # Added due_date field
         )
         self.assertIsNotNone(homework_id, "Create homework should return a homework ID")
 
@@ -54,6 +58,7 @@ class TestHomeworkManager(unittest.TestCase):
             self.homework2_id,
             title="Setup database",
             description="Make tables",
+            due_date="2024-12-15T12:00:00"  # Added due_date field
         )
         self.assertEqual(
             response, "Homework updated successfully", "Should confirm homework update"

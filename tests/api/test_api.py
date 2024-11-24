@@ -54,6 +54,7 @@ class TestHomeworkManager(unittest.TestCase):
             "user_id": user_id,
             "title": "Test Homework",
             "description": "This is a test homework",
+            "due_date": "2024-12-01T12:00:00"  # Added due_date field
         }
         response = post_rest_call(
             self, "http://localhost:8001/homework", json=new_homework, expected_code=201
@@ -75,6 +76,7 @@ class TestHomeworkManager(unittest.TestCase):
             "user_id": user_id,
             "title": "Test Homework",
             "description": "This is a test homework",
+            "due_date": "2024-12-01T12:00:00"  # Added due_date field
         }
         homework_response = post_rest_call(
             self, "http://localhost:8001/homework", json=new_homework, expected_code=201
@@ -98,6 +100,7 @@ class TestHomeworkManager(unittest.TestCase):
             "user_id": user_id,
             "title": "Test Homework",
             "description": "This is a test homework",
+            "due_date": "2024-12-01T12:00:00"  # Added due_date field
         }
         homework_response = post_rest_call(
             self, "http://localhost:8001/homework", json=new_homework, expected_code=201
@@ -106,6 +109,7 @@ class TestHomeworkManager(unittest.TestCase):
         updated_homework = {
             "title": "Updated Homework",
             "description": "This is an updated test homework",
+            "due_date": "2024-12-10T12:00:00"  # Added due_date field for updating
         }
         response = requests.put(
             f"http://localhost:8001/homework/{homework_id}", json=updated_homework
@@ -151,6 +155,7 @@ class TestHomeworkManager(unittest.TestCase):
             "user_id": user_id,
             "title": "Test Homework",
             "description": "This is a test homework",
+            "due_date": "2024-12-01T12:00:00"  # Added due_date field
         }
         homework_response = post_rest_call(
             self, "http://localhost:8001/homework", json=new_homework, expected_code=201
@@ -184,6 +189,7 @@ class TestHomeworkManager(unittest.TestCase):
             "user_id": user_id,
             "title": "Test Homework",
             "description": "This is a test homework",
+            "due_date": "2024-12-01T12:00:00"  # Added due_date field
         }
         homework_response = post_rest_call(
             self, "http://localhost:8001/homework", json=new_homework, expected_code=201

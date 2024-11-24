@@ -64,10 +64,11 @@ class CreateHomework(Resource):
         parser.add_argument("user_id", type=int, required=True)
         parser.add_argument("title", required=True)
         parser.add_argument("description", required=True)
+        parser.add_argument("due_date", required=True)  # Added due_date argument
         args = parser.parse_args()
 
         try:
-            homework_id = create_homework(args["user_id"], args["title"], args["description"])
+            homework_id = create_homework(args["user_id"], args["title"], args["description"], args["due_date"])
             return {"homework_id": homework_id}, 201
         except Exception as e:
             return {"message": str(e)}, 400
@@ -86,28 +87,47 @@ class EditHomework(Resource):
         data = request.get_json()
         title = data.get("title")
         description = data.get("description")
-        response = edit_homework(homework_id, title, description)
+        due_date = data.get("due_date")  # Added due_date
+
+        response = edit_homework(homework_id, title, description, due_date)
         if response == "Homework updated successfully":
             return {"message": response}, 200
         return {"message": response}, 400
 
 
-class ViewHomework(Resource):
+class ViewHomeworks(Resource):
     def get(self, user_id):
         homework = view_homework(user_id)
         homework_list = []
-        for homework in homework:
+        for hw in homework:
             homework_dict = {
-                "homework_id": homework[0],
-                "user_id": homework[1],
-                "title": homework[2],
-                "description": homework[3],
-                "category_id": homework[4],
-                "created_date": str(homework[5]) if homework[5] else None,
-                "category_name": homework[6] if len(homework) > 6 else None,
+                "homework_id": hw[0],
+                "user_id": hw[1],
+                "title": hw[2],
+                "description": hw[3],
+                "category_id": hw[4],
+                "created_date": str(hw[5]) if hw[5] else None,
+                "due_date": str(hw[6]) if hw[6] else None,  # Added due_date field
+                "category_name": hw[7] if len(hw) > 7 else None,
             }
             homework_list.append(homework_dict)
         return {"homework": homework_list}, 200
+    
+    
+class GetHomework(Resource):
+    def get(self, homework_id):
+        homework = get_homework(homework_id)
+        homework_dict = {
+            "homework_id": homework[0],
+            "user_id": homework[1],
+            "title": homework[2],
+            "description": homework[3],
+            "category_id": homework[4],
+            "created_date": str(homework[5]) if homework[5] else None,
+            "due_date": str(homework[6]) if homework[6] else None,  # Added due_date field
+            "category_name": homework[7] if len(homework) > 7 else None,
+        }
+        return {"homework": homework_dict}, 200
 
 
 class AddCategory(Resource):
