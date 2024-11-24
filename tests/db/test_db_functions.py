@@ -4,7 +4,7 @@ from src.db.homework_tracker_db import *
 from src.db.swen610_db_utils import connect
 
 
-class TestTaskManager(unittest.TestCase):
+class TestHomeworkManager(unittest.TestCase):
 
     def setUp(self):
         """Setup the test database and seed the data"""
@@ -16,12 +16,12 @@ class TestTaskManager(unittest.TestCase):
         self.user2_id = signup("Bob", "bob@example.com", "password456")
         self.user3_id = signup("Charlie", "charlie@example.com", "password789")
 
-        # Create tasks for users
-        self.task1_id = create_task(
-            self.user1_id, "Buy groceries", "Buy milk, eggs, and bread"
+        # Create homework for users
+        self.homework1_id = create_homework(
+            self.user1_id, "Create repo", "Push db connector code"
         )
-        self.task2_id = create_task(self.user1_id, "Read book", "Finish reading '1984'")
-        self.task3_id = create_task(self.user2_id, "Exercise", "Go for a 30-minute run")
+        self.homework2_id = create_homework(self.user1_id, "Setup database", "Make tables")
+        self.homework3_id = create_homework(self.user2_id, "Setup API base", "Make routes")
 
     def test_signup(self):
         """Test user signup"""
@@ -34,29 +34,29 @@ class TestTaskManager(unittest.TestCase):
         self.assertIsNotNone(user, "Signin should return user details")
         self.assertEqual(user[1], "Alice", "User name should be Alice")
 
-    def test_create_task(self):
-        """Test creating a task"""
-        task_id = create_task(
-            self.user3_id, "Clean house", "Vacuum and dust the living room"
+    def test_create_homework(self):
+        """Test creating a homework"""
+        homework_id = create_homework(
+            self.user3_id, "Design DB schema", "Insert test data"
         )
-        self.assertIsNotNone(task_id, "Create task should return a task ID")
+        self.assertIsNotNone(homework_id, "Create homework should return a homework ID")
 
-    def test_delete_task(self):
-        """Test deleting a task"""
-        response = delete_task(self.task1_id)
+    def test_delete_homework(self):
+        """Test deleting a homework"""
+        response = delete_homework(self.homework1_id)
         self.assertEqual(
-            response, "Task deleted successfully", "Should confirm task deletion"
+            response, "Homework deleted successfully", "Should confirm homework deletion"
         )
 
-    def test_edit_task(self):
-        """Test editing a task"""
-        response = edit_task(
-            self.task2_id,
-            title="Read a book",
-            description="Finish reading '1984' by George Orwell",
+    def test_edit_homework(self):
+        """Test editing a homework"""
+        response = edit_homework(
+            self.homework2_id,
+            title="Setup database",
+            description="Make tables",
         )
         self.assertEqual(
-            response, "Task updated successfully", "Should confirm task update"
+            response, "Homework updated successfully", "Should confirm homework update"
         )
 
     def test_change_password(self):
@@ -72,15 +72,15 @@ class TestTaskManager(unittest.TestCase):
         self.assertIsNotNone(user_data, "Get user data should return user details")
         self.assertEqual(user_data[1], "Alice", "User name should be Alice")
 
-    def test_view_tasks(self):
-        """Test viewing tasks"""
-        tasks = view_tasks(self.user1_id)
-        self.assertEqual(len(tasks), 2, "User should have 2 tasks")
+    def test_view_homeworks(self):
+        """Test viewing homework"""
+        homework = view_homework(self.user1_id)
+        self.assertEqual(len(homework), 2, "User should have 2 homework")
         self.assertEqual(
-            tasks[0][2], "Buy groceries", "First task title should be 'Buy groceries'"
+            homework[0][2], "Buy groceries", "First homework title should be 'Buy groceries'"
         )
         self.assertEqual(
-            tasks[1][2], "Read book", "Second task title should be 'Read book'"
+            homework[1][2], "Read book", "Second homework title should be 'Read book'"
         )
 
     def test_add_category(self):
@@ -99,23 +99,23 @@ class TestTaskManager(unittest.TestCase):
         )
 
     def test_assign_category(self):
-        """Test assigning a category to a task"""
+        """Test assigning a category to a homework"""
         category_id = add_category("Urgent")
-        response = assign_category(self.task1_id, category_id)
+        response = assign_category(self.homework1_id, category_id)
         self.assertEqual(
             response,
-            "Category assigned to task successfully",
+            "Category assigned to homework successfully",
             "Should confirm category assignment",
         )
 
     def test_remove_category(self):
-        """Test removing a category from a task"""
+        """Test removing a category from a homework"""
         category_id = add_category("Optional")
-        assign_category(self.task2_id, category_id)
-        response = remove_category(self.task2_id)
+        assign_category(self.homework2_id, category_id)
+        response = remove_category(self.homework2_id)
         self.assertEqual(
             response,
-            "Category removed from task successfully",
+            "Category removed from homework successfully",
             "Should confirm category removal",
         )
 

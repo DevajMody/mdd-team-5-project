@@ -58,7 +58,7 @@ class GetUserData(Resource):
         return {"message": "User not found"}, 404
 
 
-class CreateTask(Resource):
+class CreateHomework(Resource):
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument("user_id", type=int, required=True)
@@ -67,47 +67,47 @@ class CreateTask(Resource):
         args = parser.parse_args()
 
         try:
-            task_id = create_task(args["user_id"], args["title"], args["description"])
-            return {"task_id": task_id}, 201
+            homework_id = create_homework(args["user_id"], args["title"], args["description"])
+            return {"homework_id": homework_id}, 201
         except Exception as e:
             return {"message": str(e)}, 400
 
 
-class DeleteTask(Resource):
-    def delete(self, task_id):
-        response = delete_task(task_id)
-        if response == "Task deleted successfully":
+class DeleteHomework(Resource):
+    def delete(self, homework_id):
+        response = delete_homework(homework_id)
+        if response == "Homework deleted successfully":
             return {"message": response}, 200
         return {"message": response}, 404
 
 
-class EditTask(Resource):
-    def put(self, task_id):
+class EditHomework(Resource):
+    def put(self, homework_id):
         data = request.get_json()
         title = data.get("title")
         description = data.get("description")
-        response = edit_task(task_id, title, description)
-        if response == "Task updated successfully":
+        response = edit_homework(homework_id, title, description)
+        if response == "Homework updated successfully":
             return {"message": response}, 200
         return {"message": response}, 400
 
 
-class ViewTasks(Resource):
+class ViewHomework(Resource):
     def get(self, user_id):
-        tasks = view_tasks(user_id)
-        task_list = []
-        for task in tasks:
-            task_dict = {
-                "task_id": task[0],
-                "user_id": task[1],
-                "title": task[2],
-                "description": task[3],
-                "category_id": task[4],
-                "created_date": str(task[5]) if task[5] else None,
-                "category_name": task[6] if len(task) > 6 else None,
+        homework = view_homework(user_id)
+        homework_list = []
+        for homework in homework:
+            homework_dict = {
+                "homework_id": homework[0],
+                "user_id": homework[1],
+                "title": homework[2],
+                "description": homework[3],
+                "category_id": homework[4],
+                "created_date": str(homework[5]) if homework[5] else None,
+                "category_name": homework[6] if len(homework) > 6 else None,
             }
-            task_list.append(task_dict)
-        return {"tasks": task_list}, 200
+            homework_list.append(homework_dict)
+        return {"homework": homework_list}, 200
 
 
 class AddCategory(Resource):
@@ -127,16 +127,16 @@ class DeleteCategory(Resource):
 
 
 class AssignCategory(Resource):
-    def put(self, task_id, category_id):
-        response = assign_category(task_id, category_id)
-        if response == "Category assigned to task successfully":
+    def put(self, homework_id, category_id):
+        response = assign_category(homework_id, category_id)
+        if response == "Category assigned to homework successfully":
             return {"message": response}, 200
         return {"message": response}, 400
 
 
 class RemoveCategory(Resource):
-    def put(self, task_id):
-        response = remove_category(task_id)
-        if response == "Category removed from task successfully":
+    def put(self, homework_id):
+        response = remove_category(homework_id)
+        if response == "Category removed from homework successfully":
             return {"message": response}, 200
         return {"message": response}, 400

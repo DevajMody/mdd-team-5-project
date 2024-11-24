@@ -4,7 +4,7 @@ import os
 
 def load_config():
     config = {}
-    yml_path = os.path.join(os.path.dirname(__file__), "../../config/db.yml")
+    yml_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../config/db.yml"))
     with open(yml_path, "r") as file:
         config = yaml.load(file, Loader=yaml.FullLoader)
     return config

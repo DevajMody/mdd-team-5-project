@@ -20,11 +20,11 @@ api.add_resource(
 )
 api.add_resource(GetUserData, "/user/<int:user_id>", endpoint="get_user_data")
 
-# Task APIs
-api.add_resource(CreateTask, "/tasks", endpoint="create_task")
-api.add_resource(DeleteTask, "/tasks/<int:task_id>", endpoint="delete_task")
-api.add_resource(EditTask, "/tasks/<int:task_id>", endpoint="edit_task")
-api.add_resource(ViewTasks, "/tasks/user/<int:user_id>", endpoint="view_tasks")
+# Homework APIs
+api.add_resource(CreateHomework, "/homework", endpoint="create_homework")
+api.add_resource(DeleteHomework, "/homework/<int:homework_id>", endpoint="delete_homework")
+api.add_resource(EditHomework, "/homework/<int:homework_id>", endpoint="edit_homework")
+api.add_resource(ViewHomework, "/homework/user/<int:user_id>", endpoint="view_homework")
 
 # Category APIs
 api.add_resource(AddCategory, "/categories", endpoint="add_category")
@@ -33,13 +33,13 @@ api.add_resource(
 )
 api.add_resource(
     AssignCategory,
-    "/tasks/<int:task_id>/category/<int:category_id>",
+    "/homework/<int:homework_id>/category/<int:category_id>",
     endpoint="assign_category",
 )
 api.add_resource(
-    RemoveCategory, "/tasks/<int:task_id>/category", endpoint="remove_category"
+    RemoveCategory, "/homework/<int:homework_id>/category", endpoint="remove_category"
 )
 
 if __name__ == "__main__":
     rebuild_tables()
-    app.run(debug=True)
+    app.run(port=8001, debug=True)

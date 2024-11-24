@@ -6,7 +6,7 @@ import hashlib
 # Function to rebuild tables
 def rebuild_tables():
     exec_sql_file("src/db/schema.sql")
-    # exec_sql_file("src/db/taskmanager_data.sql")
+    # exec_sql_file("src/db/homeworkmanager_data.sql")
 
 
 # Function to drop tables
@@ -15,11 +15,11 @@ def deleteTables():
     cur = conn.cursor()
 
     dropUsers = "DROP TABLE IF EXISTS Users CASCADE"
-    dropTasks = "DROP TABLE IF EXISTS Tasks CASCADE"
+    dropHomeworks = "DROP TABLE IF EXISTS Homework CASCADE"
     dropCategories = "DROP TABLE IF EXISTS Categories CASCADE"
 
     cur.execute(dropUsers)
-    cur.execute(dropTasks)
+    cur.execute(dropHomeworks)
     cur.execute(dropCategories)
 
     conn.commit()
@@ -67,52 +67,52 @@ def signin(email, password):
     return None
 
 
-# Function to create a task
-def create_task(user_id, title, description):
+# Function to create a homework
+def create_homework(user_id, title, description):
     conn = connect()
     cur = conn.cursor()
     try:
         query = """
-        INSERT INTO Tasks (UserID, Title, Description, CreatedDate)
+        INSERT INTO Homework (UserID, Title, Description, CreatedDate)
         VALUES (%s, %s, %s, CURRENT_TIMESTAMP) 
-        RETURNING TaskID
+        RETURNING HomeworkID
         """
         cur.execute(query, (user_id, title, description))
-        task_id = cur.fetchone()[0]
+        homework_id = cur.fetchone()[0]
         conn.commit()
-        return task_id
+        return homework_id
     except Exception as e:
         conn.rollback()
-        print(f"Error in create_task: {e}")
+        print(f"Error in create_homework: {e}")
         raise
     finally:
         cur.close()
         conn.close()
 
 
-# Function to delete a task
-def delete_task(task_id):
+# Function to delete a homework
+def delete_homework(homework_id):
     conn = connect()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM Tasks WHERE TaskID = %s", (task_id,))
+    cur.execute("SELECT * FROM Homework WHERE HomeworkID = %s", (homework_id,))
     if not cur.fetchone():
         conn.close()
-        return "Task does not exist"
+        return "Homework does not exist"
 
-    cur.execute("DELETE FROM Tasks WHERE TaskID = %s", (task_id,))
+    cur.execute("DELETE FROM Homework WHERE HomeworkID = %s", (homework_id,))
     conn.commit()
     conn.close()
-    return "Task deleted successfully"
+    return "Homework deleted successfully"
 
 
-# Function to edit a task
-def edit_task(task_id, title=None, description=None):
+# Function to edit a homework
+def edit_homework(homework_id, title=None, description=None):
     conn = connect()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM Tasks WHERE TaskID = %s", (task_id,))
+    cur.execute("SELECT * FROM Homework WHERE HomeworkID = %s", (homework_id,))
     if not cur.fetchone():
         conn.close()
-        return "Task does not exist"
+        return "Homework does not exist"
 
     update_fields = []
     update_values = []
@@ -123,16 +123,16 @@ def edit_task(task_id, title=None, description=None):
         update_fields.append("Description = %s")
         update_values.append(description)
 
-    update_values.append(task_id)
+    update_values.append(homework_id)
     cur.execute(
-        sql.SQL("UPDATE Tasks SET {} WHERE TaskID = %s").format(
+        sql.SQL("UPDATE Homework SET {} WHERE HomeworkID = %s").format(
             sql.SQL(", ").join(map(sql.SQL, update_fields))
         ),
         update_values,
     )
     conn.commit()
     conn.close()
-    return "Task updated successfully"
+    return "Homework updated successfully"
 
 
 # Function to change password
@@ -163,24 +163,24 @@ def get_user_data(user_id):
     return user_data if user_data else []
 
 
-# Function to view tasks
-def view_tasks(user_id):
+# Function to view homework
+def view_homework(user_id):
     conn = connect()
     cur = conn.cursor()
     try:
         query = """
-        SELECT t.TaskID, t.UserID, t.Title, t.Description, t.CategoryID, 
+        SELECT t.HomeworkID, t.UserID, t.Title, t.Description, t.CategoryID, 
                t.CreatedDate, c.CategoryName
-        FROM Tasks t
+        FROM Homework t
         LEFT JOIN Categories c ON t.CategoryID = c.CategoryID
         WHERE t.UserID = %s
-        ORDER BY t.TaskID
+        ORDER BY t.HomeworkID
         """
         cur.execute(query, (user_id,))
-        tasks = cur.fetchall()
-        return tasks if tasks else []
+        homework = cur.fetchall()
+        return homework if homework else []
     except Exception as e:
-        print(f"Error in view_tasks: {e}")
+        print(f"Error in view_homeworks: {e}")
         return []
     finally:
         cur.close()
@@ -217,14 +217,14 @@ def delete_category(category_id):
     return "Category deleted successfully"
 
 
-# Function to assign or reassign a category to a task
-def assign_category(task_id, category_id):
+# Function to assign or reassign a category to a homework
+def assign_category(homework_id, category_id):
     conn = connect()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM Tasks WHERE TaskID = %s", (task_id,))
+    cur.execute("SELECT * FROM Homework WHERE HomeworkID = %s", (homework_id,))
     if not cur.fetchone():
         conn.close()
-        return "Task does not exist"
+        return "Homework does not exist"
 
     cur.execute("SELECT * FROM Categories WHERE CategoryID = %s", (category_id,))
     if not cur.fetchone():
@@ -232,23 +232,23 @@ def assign_category(task_id, category_id):
         return "Category does not exist"
 
     cur.execute(
-        "UPDATE Tasks SET CategoryID = %s WHERE TaskID = %s", (category_id, task_id)
+        "UPDATE Homework SET CategoryID = %s WHERE HomeworkID = %s", (category_id, homework_id)
     )
     conn.commit()
     conn.close()
-    return "Category assigned to task successfully"
+    return "Category assigned to homework successfully"
 
 
-# Function to remove the category from a task
-def remove_category(task_id):
+# Function to remove the category from a homework
+def remove_category(homework_id):
     conn = connect()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM Tasks WHERE TaskID = %s", (task_id,))
+    cur.execute("SELECT * FROM Homework WHERE HomeworkID = %s", (homework_id,))
     if not cur.fetchone():
         conn.close()
-        return "Task does not exist"
+        return "Homework does not exist"
 
-    cur.execute("UPDATE Tasks SET CategoryID = NULL WHERE TaskID = %s", (task_id,))
+    cur.execute("UPDATE Homework SET CategoryID = NULL WHERE HomeworkID = %s", (homework_id,))
     conn.commit()
     conn.close()
-    return "Category removed from task successfully"
+    return "Category removed from homework successfully"

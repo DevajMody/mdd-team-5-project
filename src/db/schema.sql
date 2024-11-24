@@ -1,7 +1,7 @@
 -- Drop tables if they exist
 DROP TABLE IF EXISTS Users CASCADE;
 
-DROP TABLE IF EXISTS Tasks CASCADE;
+DROP TABLE IF EXISTS Homework CASCADE;
 
 DROP TABLE IF EXISTS Categories CASCADE;
 
@@ -20,9 +20,9 @@ CREATE TABLE Categories (
     CategoryName VARCHAR(100) NOT NULL
 );
 
--- Create Tasks table
-CREATE TABLE Tasks (
-    TaskID SERIAL PRIMARY KEY,
+-- Create Homeworks table
+CREATE TABLE Homework (
+    HomeworkID SERIAL PRIMARY KEY,
     UserID INT,
     CategoryID INT,
     Title VARCHAR(100) NOT NULL,
