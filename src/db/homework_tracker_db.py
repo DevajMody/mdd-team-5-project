@@ -68,16 +68,16 @@ def signin(email, password):
 
 
 # Function to create a homework
-def create_homework(user_id, title, description):
+def create_homework(user_id, title, description, due_date):
     conn = connect()
     cur = conn.cursor()
     try:
         query = """
-        INSERT INTO Homework (UserID, Title, Description, CreatedDate)
-        VALUES (%s, %s, %s, CURRENT_TIMESTAMP) 
+        INSERT INTO Homework (UserID, Title, Description, CreatedDate, DueDate)
+        VALUES (%s, %s, %s, CURRENT_TIMESTAMP, %s) 
         RETURNING HomeworkID
         """
-        cur.execute(query, (user_id, title, description))
+        cur.execute(query, (user_id, title, description, due_date))
         homework_id = cur.fetchone()[0]
         conn.commit()
         return homework_id
@@ -106,7 +106,7 @@ def delete_homework(homework_id):
 
 
 # Function to edit a homework
-def edit_homework(homework_id, title=None, description=None):
+def edit_homework(homework_id, title=None, description=None, due_date=None):
     conn = connect()
     cur = conn.cursor()
     cur.execute("SELECT * FROM Homework WHERE HomeworkID = %s", (homework_id,))
@@ -122,6 +122,9 @@ def edit_homework(homework_id, title=None, description=None):
     if description:
         update_fields.append("Description = %s")
         update_values.append(description)
+    if due_date:
+        update_fields.append("DueDate = %s")
+        update_values.append(due_date)
 
     update_values.append(homework_id)
     cur.execute(
@@ -170,7 +173,7 @@ def view_homework(user_id):
     try:
         query = """
         SELECT t.HomeworkID, t.UserID, t.Title, t.Description, t.CategoryID, 
-               t.CreatedDate, c.CategoryName
+               t.CreatedDate, t.DueDate, c.CategoryName
         FROM Homework t
         LEFT JOIN Categories c ON t.CategoryID = c.CategoryID
         WHERE t.UserID = %s
@@ -180,20 +183,20 @@ def view_homework(user_id):
         homework = cur.fetchall()
         return homework if homework else []
     except Exception as e:
-        print(f"Error in view_homeworks: {e}")
+        print(f"Error in view_homework: {e}")
         return []
     finally:
         cur.close()
         conn.close()
         
-# Function to view homework
+# Function to view a specific homework
 def get_homework(homework_id):
     conn = connect()
     cur = conn.cursor()
     try:
         query = """
         SELECT t.HomeworkID, t.UserID, t.Title, t.Description, t.CategoryID, 
-               t.CreatedDate, c.CategoryName
+               t.CreatedDate, t.DueDate, c.CategoryName
         FROM Homework t
         LEFT JOIN Categories c ON t.CategoryID = c.CategoryID
         WHERE t.HomeworkID = %s
@@ -202,7 +205,7 @@ def get_homework(homework_id):
         homework = cur.fetchall()
         return homework if homework else []
     except Exception as e:
-        print(f"Error in get_homeworks: {e}")
+        print(f"Error in get_homework: {e}")
         return []
     finally:
         cur.close()

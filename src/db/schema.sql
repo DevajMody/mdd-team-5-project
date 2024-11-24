@@ -28,6 +28,7 @@ CREATE TABLE Homework (
     Title VARCHAR(100) NOT NULL,
     Description TEXT,
     CreatedDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    DueDate TIMESTAMP,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
 );
