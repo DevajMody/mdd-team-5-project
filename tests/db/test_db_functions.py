@@ -77,10 +77,10 @@ class TestHomeworkManager(unittest.TestCase):
         homework = view_homework(self.user1_id)
         self.assertEqual(len(homework), 2, "User should have 2 homework")
         self.assertEqual(
-            homework[0][2], "Buy groceries", "First homework title should be 'Buy groceries'"
+            homework[0][2], "Create repo", "First homework title should be 'Create repo'"
         )
         self.assertEqual(
-            homework[1][2], "Read book", "Second homework title should be 'Read book'"
+            homework[1][2], "Setup database", "Second homework title should be 'Setup database'"
         )
 
     def test_add_category(self):
