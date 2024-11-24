@@ -92,7 +92,7 @@ class EditHomework(Resource):
         return {"message": response}, 400
 
 
-class ViewHomework(Resource):
+class ViewHomeworks(Resource):
     def get(self, user_id):
         homework = view_homework(user_id)
         homework_list = []
@@ -108,6 +108,20 @@ class ViewHomework(Resource):
             }
             homework_list.append(homework_dict)
         return {"homework": homework_list}, 200
+    
+class GetHomework(Resource):
+    def get(self, homework_id):
+        homework = get_homework(homework_id)
+        homework_dict = {
+                "homework_id": homework[0],
+                "user_id": homework[1],
+                "title": homework[2],
+                "description": homework[3],
+                "category_id": homework[4],
+                "created_date": str(homework[5]) if homework[5] else None,
+                "category_name": homework[6] if len(homework) > 6 else None,
+            }
+        return {"homework": homework_dict}, 200
 
 
 class AddCategory(Resource):

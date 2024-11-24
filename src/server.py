@@ -24,7 +24,8 @@ api.add_resource(GetUserData, "/user/<int:user_id>", endpoint="get_user_data")
 api.add_resource(CreateHomework, "/homework", endpoint="create_homework")
 api.add_resource(DeleteHomework, "/homework/<int:homework_id>", endpoint="delete_homework")
 api.add_resource(EditHomework, "/homework/<int:homework_id>", endpoint="edit_homework")
-api.add_resource(ViewHomework, "/homework/user/<int:user_id>", endpoint="view_homework")
+api.add_resource(ViewHomeworks, "/homework/user/<int:user_id>", endpoint="view_homework")
+api.add_resource(GetHomework, "/homework/user/<int:homework_id>", endpoint="get_homework")
 
 # Category APIs
 api.add_resource(AddCategory, "/categories", endpoint="add_category")

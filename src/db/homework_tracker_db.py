@@ -185,6 +185,28 @@ def view_homework(user_id):
     finally:
         cur.close()
         conn.close()
+        
+# Function to view homework
+def get_homework(homework_id):
+    conn = connect()
+    cur = conn.cursor()
+    try:
+        query = """
+        SELECT t.HomeworkID, t.UserID, t.Title, t.Description, t.CategoryID, 
+               t.CreatedDate, c.CategoryName
+        FROM Homework t
+        LEFT JOIN Categories c ON t.CategoryID = c.CategoryID
+        WHERE t.HomeworkID = %s
+        """
+        cur.execute(query, (homework_id,))
+        homework = cur.fetchall()
+        return homework if homework else []
+    except Exception as e:
+        print(f"Error in get_homeworks: {e}")
+        return []
+    finally:
+        cur.close()
+        conn.close()
 
 
 # Function to add a category
