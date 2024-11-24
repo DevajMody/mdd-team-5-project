@@ -191,4 +191,3 @@ Admin-related use case:
 ### Class Diagram
   
 ![Use Case Diagram](images/class_diagram.png)
->>>>>>> f92a9a1295f25c290d9fbb26a69d487674cd246c
