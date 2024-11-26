@@ -9,7 +9,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:5000/signin", {
+      const response = await fetch("http://localhost:8001/signin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -21,7 +21,8 @@ const Login = () => {
         const data = await response.json();
         setMessage("Login successful!");
         console.log("Logged in user:", data.user);
-        // Save user data in localStorage or context (e.g., data.user)
+        // Navigate to the dashboard or save user info
+        localStorage.setItem("user", JSON.stringify(data.user));
       } else if (response.status === 401) {
         setMessage("Invalid credentials. Please try again.");
       } else {

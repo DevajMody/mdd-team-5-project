@@ -1,9 +1,11 @@
 from flask import Flask
 from flask_restful import Api
+from flask_cors import CORS
 from api.homework_tracker_api import *
 
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}}) #Enable CORS on Flask server to work with Nodejs pages
 api = Api(app)
 
 api.add_resource(Init, "/manage/init")  # Management API for initializing the DB
@@ -41,6 +43,10 @@ api.add_resource(
     RemoveCategory, "/homework/<int:homework_id>/category", endpoint="remove_category"
 )
 
-if __name__ == "__main__":
-    rebuild_tables()
-    app.run(port=8001, debug=True)
+@app.route('/')
+def index():
+  return "Welcome to your Flask application!"
+
+if __name__ == '__main__':
+    # app.run(host='0.0.0.0', port=8001)
+    app.run(host='0.0.0.0', port=8001, debug=True) #starts Flask

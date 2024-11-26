@@ -1,34 +1,69 @@
 import React, { useState } from "react";
 import { TextField, Button, Tabs, Tab, Box } from "@mui/material";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
-import "../styles/Login.css";
+import { useNavigate } from "react-router-dom";
 
 const UserLogin = () => {
-  const [tabValue, setTabValue] = useState(0); // 0: Login, 1: Register
+  const [tabValue, setTabValue] = useState(0);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState(""); // For signup form
-
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [name, setName] = useState("");
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
+    setMessage(""); // Clear messages when switching tabs
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("User login:", { email, password });
-    // After successful login, redirect to dashboard
-    navigate("/dashboard");
+    try {
+      const response = await fetch("http://localhost:8001/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setMessage("Login successful!");
+        localStorage.setItem("user", JSON.stringify(data.user));
+        navigate("/dashboard");
+      } else if (response.status === 401) {
+        setMessage("Invalid credentials. Please try again.");
+      } else {
+        setMessage("An error occurred. Please try again later.");
+      }
+    } catch (error) {
+      console.error("Error logging in:", error);
+      setMessage("An error occurred. Please try again later.");
+    }
   };
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-    console.log("User signup:", { name, email, password });
-  };
+    try {
+      const response = await fetch("http://localhost:8001/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
 
-  const redirectToAdmin = () => {
-    navigate("/admin-login"); // Redirect to admin login page
+      if (response.ok) {
+        const data = await response.json();
+        setMessage("Signup successful! Please log in.");
+        setTabValue(0); // Switch to Login tab after signup
+      } else {
+        setMessage("An error occurred during signup. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error signing up:", error);
+      setMessage("An error occurred. Please try again later.");
+    }
   };
 
   return (
@@ -44,15 +79,12 @@ const UserLogin = () => {
           centered
           indicatorColor="primary"
           textColor="primary"
-          className="tabs"
         >
           <Tab label="Login" />
           <Tab label="Register" />
         </Tabs>
-
         {tabValue === 0 ? (
-          // Login Form
-          <form onSubmit={handleLogin} className="login-form">
+          <form onSubmit={handleLogin}>
             <TextField
               label="Email"
               variant="outlined"
@@ -70,19 +102,12 @@ const UserLogin = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{ marginTop: "20px" }}
-            >
+            <Button type="submit" variant="contained" fullWidth>
               Login
             </Button>
           </form>
         ) : (
-          // Signup Form
-          <form onSubmit={handleSignup} className="login-form">
+          <form onSubmit={handleSignup}>
             <TextField
               label="Name"
               variant="outlined"
@@ -108,26 +133,12 @@ const UserLogin = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{ marginTop: "20px" }}
-            >
+            <Button type="submit" variant="contained" fullWidth>
               Register
             </Button>
           </form>
         )}
-        <Button
-          variant="text"
-          color="primary"
-          fullWidth
-          sx={{ marginTop: "10px" }}
-          onClick={redirectToAdmin}
-        >
-          Admin Login
-        </Button>
+        {message && <p>{message}</p>}
       </Box>
     </Box>
   );

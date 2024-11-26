@@ -21,12 +21,31 @@ class TearDown(Resource):
 
 class SignUp(Resource):
     def post(self):
-        data = request.get_json()
-        name = data.get("name")
-        email = data.get("email")
-        password = data.get("password")
-        user_id = signup(name, email, password)
-        return {"user_id": user_id}, 201
+        try:
+            data = request.get_json(force=True)  # Force parsing even if content-type is not set
+            print("Received data:", data)  # Debug log
+            
+            if not data:
+                print("No data received")
+                return {"message": "No data provided"}, 400
+
+            name = data.get("name")
+            email = data.get("email")
+            password = data.get("password")
+
+            # More detailed validation
+            if not all([name, email, password]):
+                print("Missing fields:", {"name": name, "email": email, "password": bool(password)})
+                return {"message": "Missing required fields"}, 400
+
+            user_id = signup(name, email, password)
+            return {"user_id": user_id}, 201
+
+        except Exception as e:
+            print(f"Signup Error: {str(e)}")
+            print(traceback.format_exc())
+            return {"message": f"Internal server error: {str(e)}"}, 500
+
 
 
 class SignIn(Resource):

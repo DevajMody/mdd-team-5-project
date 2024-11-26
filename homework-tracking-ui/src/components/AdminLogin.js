@@ -1,14 +1,38 @@
 import React, { useState } from "react";
 import { TextField, Button, Box } from "@mui/material";
-import "../styles/Login.css";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Admin login:", { email, password });
+
+    try {
+      const response = await fetch("http://localhost:8001/admin-signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setMessage("Admin login successful!");
+        console.log("Logged in admin:", data.admin);
+        // Save admin data and navigate to admin dashboard
+        localStorage.setItem("admin", JSON.stringify(data.admin));
+      } else if (response.status === 401) {
+        setMessage("Invalid admin credentials. Please try again.");
+      } else {
+        setMessage("An error occurred. Please try again later.");
+      }
+    } catch (error) {
+      console.error("Error during admin login:", error);
+      setMessage("An error occurred. Please try again later.");
+    }
   };
 
   return (
@@ -17,10 +41,10 @@ const AdminLogin = () => {
         <img src="/logo512.png" alt="RIT Logo" className="rit-logo" />
       </Box>
       <Box className="login-right">
-        <h2>CampusEvents - Admin</h2>
+        <h2>Admin Login</h2>
         <form onSubmit={handleLogin} className="login-form">
           <TextField
-            label="Admin Username"
+            label="Email"
             variant="outlined"
             fullWidth
             margin="normal"
@@ -46,6 +70,7 @@ const AdminLogin = () => {
             Login
           </Button>
         </form>
+        {message && <p>{message}</p>}
       </Box>
     </Box>
   );
