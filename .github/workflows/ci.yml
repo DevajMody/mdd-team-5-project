@@ -40,7 +40,7 @@ jobs:
 
       - name: Copy config file
         run: |
-          cp config/gitlab-credentials.yml config/db.yml
+          cp server/config/gitlab-credentials.yml server/config/db.yml
 
       - name: Show Python version
         run: |
