@@ -1,5 +1,5 @@
 import unittest
-from server.tests.test_utils import *
+from tests.test_utils import *
 
 
 class TestHomeworkManager(unittest.TestCase):
