@@ -32,6 +32,7 @@ def clear_session_key(user_id):
     conn.commit()
     conn.close()
 
+
 def get_user_by_session_key(session_key):
     conn = connect()
     cur = conn.cursor()
@@ -316,3 +317,5 @@ def remove_category(homework_id):
     conn.commit()
     conn.close()
     return "Category removed from homework successfully"
+
+

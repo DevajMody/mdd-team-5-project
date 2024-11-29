@@ -11,68 +11,54 @@ import {
   InputLabel,
 } from "@mui/material";
 
-const AddAssignment = ({ open, onClose, onSubmit, sessionKey, userId }) => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [priority, setPriority] = useState("");
-  const [subject, setSubject] = useState("");
+const EditAssignment = ({ open, onClose, onSubmit, sessionKey, homework }) => {
+  const [title, setTitle] = useState(homework.title || "");
+  const [description, setDescription] = useState(homework.description || "");
+  const [dueDate, setDueDate] = useState(homework.due_date || "");
+  const [subject, setSubject] = useState(homework.subject || "");
+  const [priority, setPriority] = useState(homework.priority || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Prevent multiple submissions
     if (isSubmitting) return;
 
-    const newAssignment = {
+    const updatedAssignment = {
       title,
       description,
       due_date: dueDate,
-      priority,
       subject,
+      priority,
     };
-
-    if (!sessionKey) {
-      console.error("No session key found. User might not be logged in.");
-      alert("You need to log in to add an assignment.");
-      return;
-    }
 
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("http://localhost:8001/homework", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Session-Key": sessionKey,
-        },
-        body: JSON.stringify(newAssignment),
-      });
+      const response = await fetch(
+        `http://localhost:8001/homework/${homework.homework_id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Session-Key": sessionKey,
+          },
+          body: JSON.stringify(updatedAssignment),
+        }
+      );
 
       if (response.ok) {
-        console.log("Assignment added successfully.");
-
-        // Wait for the onSubmit to complete before closing
-        await onSubmit(newAssignment);
-
-        // Reset form
-        setTitle("");
-        setDescription("");
-        setDueDate("");
-        setPriority("");
-        setSubject("");
-
-        onClose(); // Close modal
+        console.log("Assignment updated successfully.");
+        await onSubmit(updatedAssignment);
+        onClose();
       } else {
         const errorMsg = await response.text();
-        console.error("Failed to add assignment:", errorMsg);
-        alert(`Failed to add assignment: ${errorMsg}`);
+        console.error("Failed to update assignment:", errorMsg);
+        alert(`Failed to update assignment: ${errorMsg}`);
       }
     } catch (error) {
-      console.error("Error adding assignment:", error);
-      alert("An error occurred while adding the assignment.");
+      console.error("Error updating assignment:", error);
+      alert("An error occurred while updating the assignment.");
     } finally {
       setIsSubmitting(false);
     }
@@ -94,7 +80,7 @@ const AddAssignment = ({ open, onClose, onSubmit, sessionKey, userId }) => {
         }}
       >
         <Typography variant="h6" gutterBottom>
-          Add New Assignment
+          Edit Assignment
         </Typography>
         <form onSubmit={handleSubmit}>
           <TextField
@@ -131,30 +117,31 @@ const AddAssignment = ({ open, onClose, onSubmit, sessionKey, userId }) => {
             required
             disabled={isSubmitting}
           />
-          <FormControl fullWidth margin="normal" disabled={isSubmitting}>
-            <InputLabel>Priority</InputLabel>
-            <Select
-              value={priority}
-              onChange={(e) => setPriority(e.target.value)}
-              required
-            >
-              <MenuItem value="High">High</MenuItem>
-              <MenuItem value="Medium">Medium</MenuItem>
-              <MenuItem value="Low">Low</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl fullWidth margin="normal" disabled={isSubmitting}>
+          <FormControl fullWidth margin="normal">
             <InputLabel>Subject</InputLabel>
             <Select
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               required
+              disabled={isSubmitting}
             >
               <MenuItem value="Mathematics">Mathematics</MenuItem>
               <MenuItem value="Physics">Physics</MenuItem>
               <MenuItem value="Chemistry">Chemistry</MenuItem>
               <MenuItem value="English">English</MenuItem>
-              {/* Add more subjects as needed */}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Priority</InputLabel>
+            <Select
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+              required
+              disabled={isSubmitting}
+            >
+              <MenuItem value="High">High</MenuItem>
+              <MenuItem value="Medium">Medium</MenuItem>
+              <MenuItem value="Low">Low</MenuItem>
             </Select>
           </FormControl>
           <Button
@@ -165,7 +152,7 @@ const AddAssignment = ({ open, onClose, onSubmit, sessionKey, userId }) => {
             sx={{ mt: 2 }}
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Submitting..." : "Submit"}
+            {isSubmitting ? "Updating..." : "Update"}
           </Button>
         </form>
       </Box>
@@ -173,4 +160,4 @@ const AddAssignment = ({ open, onClose, onSubmit, sessionKey, userId }) => {
   );
 };
 
-export default AddAssignment;
+export default EditAssignment;

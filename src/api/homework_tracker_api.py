@@ -64,15 +64,21 @@ class SignIn(Resource):
 class Logout(Resource):
     def post(self):
         session_key = request.headers.get("Session-Key")
+
         if not session_key:
             return {"message": "Session key is required"}, 400
 
+        # Fetch the user associated with the session key
         user = get_user_by_session_key(session_key)
         if not user:
             return {"message": "Invalid session key"}, 401
 
-        clear_session_key(user["UserID"])  # Clear session key from the database
-        return {"message": "Logged out successfully"}, 200
+        try:
+            # Clear the session key from the database
+            clear_session_key(user["user_id"])
+            return {"message": "Logged out successfully"}, 200
+        except Exception as e:
+            return {"message": f"Error during logout: {str(e)}"}, 500
 
 
 
@@ -88,10 +94,17 @@ class ChangePassword(Resource):
 
 class GetUserData(Resource):
     def get(self, user_id):
-        user_data = get_user_data(user_id)
-        if user_data:
-            return {"user_data": user_data}, 200
-        return {"message": "User not found"}, 404
+        session_key = request.headers.get("Session-Key")
+
+        if not session_key:
+            return {"message": "Session key is required"}, 401
+
+        user = get_user_by_session_key(session_key)
+        if not user:
+            return {"message": "Invalid session key"}, 401
+
+        return {"user_data": user}, 200
+
 
 
 class CreateHomework(Resource):
@@ -174,14 +187,14 @@ class EditHomework(Resource):
 
 
 class ViewHomeworks(Resource):
-    def get(self):
+    def get(self, user_id):
         session_key = request.headers.get("Session-Key")
         user = get_user_by_session_key(session_key)
 
         if not user:
             return {"message": "Unauthorized. Please log in."}, 401
 
-        homework = view_homework(user["UserID"])
+        homework = view_homework(user_id)
         homework_list = []
         for hw in homework:
             homework_dict = {
