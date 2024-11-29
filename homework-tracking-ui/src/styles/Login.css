@@ -1,0 +1,63 @@
+/* Main page styles */
+.login-page {
+  display: flex;
+  height: 100vh;
+}
+
+/* Left-side image container */
+.login-left {
+  flex: 1;
+  background-color: #f56a00;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.rit-logo {
+  max-width: 70%;
+  height: auto;
+}
+
+/* Right-side login container */
+.login-right {
+  flex: 1;
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+h2 {
+  color: #f56a00;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+/* Tabs */
+.tabs {
+  margin-bottom: 20px;
+}
+
+/* Form styles */
+.login-form {
+  width: 100%;
+  max-width: 400px;
+}
+
+.MuiButton-containedPrimary {
+  background-color: #f56a00;
+}
+
+.MuiButton-containedPrimary:hover {
+  background-color: #d45500;
+}
+
+/* Admin login button */
+.MuiButton-textPrimary {
+  color: #f56a00;
+}
+
+.MuiButton-textPrimary:hover {
+  color: #d45500;
+}

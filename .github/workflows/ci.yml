@@ -2,7 +2,7 @@ name: Python CI
 
 on:
   push:
-    branches: [umm7905_dev, main]
+    branches: [umm7905_dev, main, ss7536-login]
   pull_request:
     branches: [main]
 

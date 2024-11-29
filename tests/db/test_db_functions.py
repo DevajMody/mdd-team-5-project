@@ -11,10 +11,16 @@ class TestHomeworkManager(unittest.TestCase):
         # Rebuild the tables in the test database
         rebuild_tables()
 
-        # Add users to the Users table
+        # Add users to the users table and generate session keys
         self.user1_id = signup("Alice", "alice@example.com", "password123")
         self.user2_id = signup("Bob", "bob@example.com", "password456")
         self.user3_id = signup("Charlie", "charlie@example.com", "password789")
+        self.session1 = generate_session_key()
+        self.session2 = generate_session_key()
+        self.session3 = generate_session_key()
+        update_session_key(self.user1_id, self.session1)
+        update_session_key(self.user2_id, self.session2)
+        update_session_key(self.user3_id, self.session3)
 
         # Create homework for users
         self.homework1_id = create_homework(
@@ -36,7 +42,7 @@ class TestHomeworkManager(unittest.TestCase):
         """Test user signin"""
         user = signin("alice@example.com", "password123")
         self.assertIsNotNone(user, "Signin should return user details")
-        self.assertEqual(user[1], "Alice", "User name should be Alice")
+        self.assertEqual(user["user_name"], "Alice", "User name should be Alice")
 
     def test_create_homework(self):
         """Test creating a homework"""
@@ -56,8 +62,8 @@ class TestHomeworkManager(unittest.TestCase):
         """Test editing a homework"""
         response = edit_homework(
             self.homework2_id,
-            title="Setup database",
-            description="Make tables",
+            title="Setup database updated",
+            description="Make tables updated",
             due_date="2024-12-15T12:00:00"  # Added due_date field
         )
         self.assertEqual(
@@ -73,9 +79,9 @@ class TestHomeworkManager(unittest.TestCase):
 
     def test_get_user_data(self):
         """Test getting user data"""
-        user_data = get_user_data(self.user1_id)
+        user_data = get_user_by_session_key(self.session1)
         self.assertIsNotNone(user_data, "Get user data should return user details")
-        self.assertEqual(user_data[1], "Alice", "User name should be Alice")
+        self.assertEqual(user_data["user_name"], "Alice", "User name should be Alice")
 
     def test_view_homeworks(self):
         """Test viewing homework"""
@@ -124,9 +130,9 @@ class TestHomeworkManager(unittest.TestCase):
             "Should confirm category removal",
         )
 
-    def tearDown(self):
-        """Clean up the test database by deleting the tables"""
-        deleteTables()
+    # def tearDown(self):
+    #     """Clean up the test database by deleting the tables"""
+    #     deleteTables()
 
 
 if __name__ == "__main__":
