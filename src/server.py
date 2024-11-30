@@ -17,10 +17,13 @@ api.add_resource(TearDown, "/teardown")
 # User APIs
 api.add_resource(SignUp, "/signup", endpoint="signup")
 api.add_resource(SignIn, "/signin", endpoint="signin")
+api.add_resource(Logout, "/logout", endpoint="logout")
 api.add_resource(
     ChangePassword, "/change_password/<int:user_id>", endpoint="change_password"
 )
 api.add_resource(GetUserData, "/user/<int:user_id>", endpoint="get_user_data")
+
+
 
 # Homework APIs
 api.add_resource(CreateHomework, "/homework", endpoint="create_homework")

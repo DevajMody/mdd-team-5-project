@@ -1,12 +1,16 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { TextField, Button, Box, Typography } from "@mui/material";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError(""); // Clear previous errors
 
     try {
       const response = await fetch("http://localhost:8001/signin", {
@@ -19,47 +23,73 @@ const Login = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setMessage("Login successful!");
-        console.log("Logged in user:", data.user);
-        // Navigate to the dashboard or save user info
-        localStorage.setItem("user", JSON.stringify(data.user));
-      } else if (response.status === 401) {
-        setMessage("Invalid credentials. Please try again.");
+        const sessionKey = data.user.session_key;
+
+        // Store session key in localStorage
+        localStorage.setItem("sessionKey", sessionKey);
+
+        // Redirect to dashboard
+        navigate("/dashboard");
       } else {
-        setMessage("An error occurred. Please try again later.");
+        const errorData = await response.json();
+        setError(errorData.message || "Invalid login credentials");
       }
-    } catch (error) {
-      console.error("Error logging in:", error);
-      setMessage("An error occurred. Please try again later.");
+    } catch (err) {
+      console.error("Error logging in:", err);
+      setError("An error occurred. Please try again.");
     }
   };
 
   return (
-    <div className="login-container">
-      <h2>Login</h2>
+    <Box
+      sx={{
+        maxWidth: 400,
+        margin: "auto",
+        mt: 5,
+        p: 3,
+        boxShadow: 3,
+        borderRadius: 2,
+      }}
+    >
+      <Typography variant="h5" mb={2}>
+        Login
+      </Typography>
+      {error && (
+        <Typography color="error" variant="body2" mb={2}>
+          {error}
+        </Typography>
+      )}
       <form onSubmit={handleLogin}>
-        <div className="form-group">
-          <label>Email:</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Login</button>
+        <TextField
+          label="Email"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <TextField
+          label="Password"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          sx={{ mt: 2 }}
+        >
+          Login
+        </Button>
       </form>
-      {message && <p>{message}</p>}
-    </div>
+    </Box>
   );
 };
 
