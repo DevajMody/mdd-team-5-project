@@ -28,6 +28,7 @@ CREATE TABLE homework (
     category_id INT,
     title VARCHAR(100) NOT NULL,
     description TEXT,
+    is_completed BOOLEAN DEFAULT FALSE,
     created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     due_date TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
