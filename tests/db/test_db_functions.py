@@ -64,7 +64,8 @@ class TestHomeworkManager(unittest.TestCase):
             self.homework2_id,
             title="Setup database updated",
             description="Make tables updated",
-            due_date="2024-12-15T12:00:00"  # Added due_date field
+            due_date="2024-12-15T12:00:00",  # Added due_date field
+            is_completed=False
         )
         self.assertEqual(
             response, "Homework updated successfully", "Should confirm homework update"
