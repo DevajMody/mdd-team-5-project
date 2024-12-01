@@ -3,6 +3,7 @@ from .swen610_db_utils import *
 from psycopg2 import sql
 import hashlib
 import uuid
+from datetime import datetime
 
 def generate_session_key():
     """Generates a unique session key."""
@@ -322,3 +323,32 @@ def remove_category(homework_id):
     return "Category removed from homework successfully"
 
 
+def get_due_dates_from_db(user_id):
+    """
+    Fetch due dates for the given user ID from the database.
+
+    Args:
+        user_id (int): The ID of the user whose homework due dates are to be fetched.
+
+    Returns:
+        list[dict]: A list of homework due dates with `homework_id`, `title`, and `due_date`.
+    """
+    try:
+        conn = connect()
+        cur = conn.cursor()
+        query = "SELECT homework_id, title, due_date FROM homework WHERE user_id = %s"
+        cur.execute(query, (user_id,))
+        homework = cur.fetchall()
+        conn.close()
+
+        # Format the result into a list of dictionaries
+        result = []
+        for hw in homework:
+            result.append({
+                "homework_id": hw[0],
+                "title": hw[1],
+                "due_date": hw[2],  # Keep the datetime object as is
+            })
+        return result
+    except Exception as e:
+        raise Exception(f"Error fetching due dates: {e}")

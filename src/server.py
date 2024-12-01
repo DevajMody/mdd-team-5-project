@@ -22,7 +22,7 @@ api.add_resource(
     ChangePassword, "/change_password/<int:user_id>", endpoint="change_password"
 )
 api.add_resource(GetUserData, "/user/<int:user_id>", endpoint="get_user_data")
-
+api.add_resource(DueDates, "/homework/due_dates/<int:user_id>", endpoint="due_dates")
 
 
 # Homework APIs

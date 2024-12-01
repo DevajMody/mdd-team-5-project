@@ -299,3 +299,31 @@ class RemoveCategory(Resource):
             return {"message": response}, 200
         return {"message": response}, 400
 
+class DueDates(Resource):
+    def get(self, user_id):
+        session_key = request.headers.get("Session-Key")
+        if not session_key:
+            return {"message": "Session key is required"}, 401
+
+        user = get_user_by_session_key(session_key)
+        if not user or user["user_id"] != user_id:
+            return {"message": "Unauthorized or invalid user"}, 403
+
+        try:
+            # Get due dates from the database
+            homework_list = get_due_dates_from_db(user_id)
+
+            # Convert datetime objects to strings
+            processed_homework_list = []
+            for hw in homework_list:
+                # Ensure due_date is converted to string
+                processed_hw = hw.copy()
+                if isinstance(processed_hw['due_date'], datetime):
+                    processed_hw['due_date'] = processed_hw['due_date'].isoformat()
+                processed_homework_list.append(processed_hw)
+
+            return {"due_dates": processed_homework_list}, 200
+        except Exception as e:
+            # Log the full error for debugging
+            print(f"Error in get method: {e}")
+            return {"message": str(e)}, 500
