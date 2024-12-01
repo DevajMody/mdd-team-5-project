@@ -236,6 +236,7 @@ class GetHomework(Resource):
             "created_date": str(homework[5]) if homework[5] else None,
             "due_date": str(homework[6]) if homework[6] else None,
             "category_name": homework[7] if len(homework) > 7 else None,
+            "is_completed": homework[8] if homework[8] else None,
         }
         return {"homework": homework_dict}, 200
 
