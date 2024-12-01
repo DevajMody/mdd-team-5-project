@@ -178,8 +178,9 @@ class EditHomework(Resource):
         title = data.get("title")
         description = data.get("description")
         due_date = data.get("due_date")
+        is_completed = data.get("is_completed")
 
-        response = edit_homework(homework_id, title, description, due_date)
+        response = edit_homework(homework_id, title, description, due_date, is_completed)
         if response == "Homework updated successfully":
             return {"message": response}, 200
         return {"message": response}, 400
@@ -206,6 +207,7 @@ class ViewHomeworks(Resource):
                 "created_date": str(hw[5]) if hw[5] else None,
                 "due_date": str(hw[6]) if hw[6] else None,
                 "category_name": hw[7] if len(hw) > 7 else None,
+                "is_completed": hw[8] if hw[8] else None,
             }
             homework_list.append(homework_dict)
         return {"homework": homework_list}, 200
@@ -234,6 +236,7 @@ class GetHomework(Resource):
             "created_date": str(homework[5]) if homework[5] else None,
             "due_date": str(homework[6]) if homework[6] else None,
             "category_name": homework[7] if len(homework) > 7 else None,
+            "is_completed": homework[8] if homework[8] else None,
         }
         return {"homework": homework_dict}, 200
 

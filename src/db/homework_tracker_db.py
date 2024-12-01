@@ -129,8 +129,8 @@ def create_homework(user_id, title, description, due_date):
         print(f"Creating homework - User ID: {user_id}, Title: {title}")
         
         query = """
-        INSERT INTO homework (user_id, title, description, created_date, due_date)
-        VALUES (%s, %s, %s, CURRENT_TIMESTAMP, %s) 
+        INSERT INTO homework (user_id, title, description, created_date, due_date, is_completed)
+        VALUES (%s, %s, %s, CURRENT_TIMESTAMP, %s, false) 
         RETURNING homework_id
         """
         cur.execute(query, (user_id, title, description, due_date))
@@ -161,7 +161,7 @@ def delete_homework(homework_id):
     conn.close()
     return "Homework deleted successfully"
 
-def edit_homework(homework_id, title=None, description=None, due_date=None):
+def edit_homework(homework_id, title=None, description=None, due_date=None, is_completed=None):
     conn = connect()
     cur = conn.cursor()
     cur.execute("SELECT * FROM homework WHERE homework_id = %s", (homework_id,))
@@ -180,6 +180,9 @@ def edit_homework(homework_id, title=None, description=None, due_date=None):
     if due_date:
         update_fields.append("due_date = %s")
         update_values.append(due_date)
+    if is_completed:
+        update_fields.append("is_completed = %s")
+        update_values.append(is_completed)
 
     update_values.append(homework_id)
     cur.execute(
@@ -222,7 +225,7 @@ def view_homework(user_id):
     try:
         query = """
         SELECT t.homework_id, t.user_id, t.title, t.description, t.category_id, 
-               t.created_date, t.due_date, c.category_name
+               t.created_date, t.due_date, c.category_name, t.is_completed
         FROM homework t
         LEFT JOIN categories c ON t.category_id = c.category_id
         WHERE t.user_id = %s
@@ -244,7 +247,7 @@ def get_homework(homework_id):
     try:
         query = """
         SELECT t.homework_id, t.user_id, t.title, t.description, t.category_id, 
-               t.created_date, t.due_date, c.category_name
+               t.created_date, t.due_date, c.category_name, t.is_completed
         FROM homework t
         LEFT JOIN categories c ON t.category_id = c.category_id
         WHERE t.homework_id = %s
