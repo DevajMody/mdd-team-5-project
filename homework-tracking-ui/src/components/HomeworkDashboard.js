@@ -13,7 +13,14 @@ import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import enUS from "date-fns/locale/en-US";
-import { CalendarToday, List, Add, Edit, Delete } from "@mui/icons-material";
+import {
+  CalendarToday,
+  List,
+  Add,
+  Edit,
+  Delete,
+  CheckCircle,
+} from "@mui/icons-material";
 import AddAssignment from "./AddAssignment";
 import EditAssignment from "./EditAssignment";
 import Logout from "./Logout";
@@ -45,7 +52,7 @@ const HomeworkDashboard = () => {
 
     if (!sessionKey) {
       console.error("Session key is missing. Redirecting to login.");
-      navigate("/login");
+      navigate("/");
       return;
     }
 
@@ -64,11 +71,11 @@ const HomeworkDashboard = () => {
         setUser(user.user_data); // Update state with user data
       } else {
         console.error("Failed to fetch user details:", response.statusText);
-        navigate("/login");
+        navigate("/");
       }
     } catch (error) {
       console.error("Error fetching user details:", error);
-      navigate("/login");
+      navigate("/");
     }
   };
 
@@ -122,15 +129,38 @@ const HomeworkDashboard = () => {
     }
   };
 
-  useEffect(() => {
-    if (user) {
-      fetchDueDates(user.user_id);
-    }
-  }, [user]);
-
   const handleEditAssignment = (assignment) => {
     setSelectedAssignment(assignment);
     setEditModalOpen(true);
+  };
+
+  const handleMarkAsCompleted = async (assignmentId) => {
+    const sessionKey = localStorage.getItem("sessionKey");
+    try {
+      const response = await fetch(
+        `http://localhost:8001/homework/${assignmentId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Session-Key": sessionKey,
+          },
+          body: JSON.stringify({ is_completed: true }),
+        }
+      );
+
+      if (response.ok) {
+        console.log("Homework marked as completed.");
+        fetchAssignments(user.user_id); // Refresh assignments after updating
+      } else {
+        const errorMsg = await response.text();
+        console.error("Failed to mark homework as completed:", errorMsg);
+        alert(`Failed to mark homework as completed: ${errorMsg}`);
+      }
+    } catch (error) {
+      console.error("Error marking homework as completed:", error);
+      alert("An error occurred while marking the homework as completed.");
+    }
   };
 
   const handleDeleteAssignment = async (assignmentId) => {
@@ -166,7 +196,8 @@ const HomeworkDashboard = () => {
 
   useEffect(() => {
     if (user) {
-      fetchAssignments(user.user_id); // Fetch assignments after user details are loaded
+      fetchAssignments(user.user_id);
+      fetchDueDates(user.user_id); // Fetch assignments after user details are loaded
     }
   }, [user]);
 
@@ -238,7 +269,15 @@ const HomeworkDashboard = () => {
           {/* Assignments List */}
           {assignments.length > 0 ? (
             assignments.map((assignment) => (
-              <Card key={assignment.homework_id} sx={{ marginBottom: 2 }}>
+              <Card
+                key={assignment.homework_id}
+                sx={{
+                  marginBottom: 2,
+                  textDecoration: assignment.is_completed
+                    ? "line-through"
+                    : "none",
+                }}
+              >
                 <CardContent>
                   <Typography variant="h6">{assignment.title}</Typography>
                   <Typography variant="body2">
@@ -248,6 +287,17 @@ const HomeworkDashboard = () => {
                     Due: {assignment.due_date}
                   </Typography>
                   <Box sx={{ display: "flex", gap: 1, marginTop: 1 }}>
+                    {!assignment.is_completed && (
+                      <Button
+                        startIcon={<CheckCircle />}
+                        color="success"
+                        onClick={() =>
+                          handleMarkAsCompleted(assignment.homework_id)
+                        }
+                      >
+                        Mark as Completed
+                      </Button>
+                    )}
                     <Button
                       startIcon={<Edit />}
                       onClick={() => handleEditAssignment(assignment)}
