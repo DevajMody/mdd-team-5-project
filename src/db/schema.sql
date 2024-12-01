@@ -12,7 +12,7 @@ CREATE TABLE users (
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     last_login_date TIMESTAMP,
-    session_key VARCHAR(255)  -- Added for session management
+    session_key VARCHAR(255) -- Added for session management
 );
 
 -- Create categories table
@@ -31,6 +31,8 @@ CREATE TABLE homework (
     is_completed BOOLEAN DEFAULT FALSE,
     created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     due_date TIMESTAMP,
+    priority VARCHAR(10) CHECK (priority IN ('High', 'Normal', 'Low')) DEFAULT 'Normal',
+    -- Priority column
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (category_id) REFERENCES categories(category_id)
 );
