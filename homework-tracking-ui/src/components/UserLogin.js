@@ -77,8 +77,20 @@ const Login = () => {
           fullWidth
           sx={{ marginBottom: 2 }}
         />
-        <Button type="submit" variant="contained" fullWidth>
+        <Button
+          type="submit"
+          variant="contained"
+          fullWidth
+          sx={{ marginBottom: 2 }}
+        >
           Login
+        </Button>
+        <Button
+          variant="text"
+          fullWidth
+          onClick={() => navigate("/signup")} // Navigate to Signup page
+        >
+          Don't have an account? Sign Up
         </Button>
       </form>
     </Box>

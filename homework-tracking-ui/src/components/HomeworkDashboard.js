@@ -9,19 +9,35 @@ import {
   CardHeader,
   Alert,
 } from "@mui/material";
+import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar";
+import { format, parse, startOfWeek, getDay } from "date-fns";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import enUS from "date-fns/locale/en-US";
 import { CalendarToday, List, Add, Edit, Delete } from "@mui/icons-material";
 import AddAssignment from "./AddAssignment";
 import EditAssignment from "./EditAssignment";
 import Logout from "./Logout";
+import CalendarView from "./CalendarView";
 import { useNavigate } from "react-router-dom";
+
+const locales = { "en-US": enUS };
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
+});
 
 const HomeworkDashboard = () => {
   const [assignments, setAssignments] = useState([]); // Assignments state
+  const [events, setEvents] = useState([]); // Calendar events
   const [user, setUser] = useState(null); // User state
   const [view, setView] = useState("list"); // 'list' or 'calendar'
   const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [selectedAssignment, setSelectedAssignment] = useState(null); // Selected assignment for editing
+  const [dueDates, setDueDates] = useState([]);
   const navigate = useNavigate();
 
   const fetchUser = async () => {
@@ -68,7 +84,14 @@ const HomeworkDashboard = () => {
       );
       if (response.ok) {
         const data = await response.json();
-        setAssignments(data.homework || []); // Fallback to an empty array
+        setAssignments(data.homework || []);
+        const calendarEvents = data.homework.map((hw) => ({
+          title: hw.title,
+          start: new Date(hw.due_date),
+          end: new Date(hw.due_date),
+          homework: hw,
+        }));
+        setEvents(calendarEvents);
       } else {
         console.error("Failed to fetch assignments:", response.statusText);
       }
@@ -77,39 +100,37 @@ const HomeworkDashboard = () => {
     }
   };
 
+  const fetchDueDates = async (userId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8001/homework/due_dates/${userId}`,
+        {
+          headers: {
+            "Session-Key": localStorage.getItem("sessionKey"),
+          },
+        }
+      );
+      if (response.ok) {
+        const { due_dates } = await response.json();
+        setDueDates(due_dates || []);
+        console.log("Due dates fetched:", due_dates); // Debug log
+      } else {
+        console.error("Failed to fetch due dates:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching due dates:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchDueDates(user.user_id);
+    }
+  }, [user]);
+
   const handleEditAssignment = (assignment) => {
     setSelectedAssignment(assignment);
     setEditModalOpen(true);
-  };
-
-  const handleUpdateAssignment = async (updatedAssignment) => {
-    const sessionKey = localStorage.getItem("sessionKey");
-    try {
-      const response = await fetch(
-        `http://localhost:8001/homework/${selectedAssignment.homework_id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "Session-Key": sessionKey,
-          },
-          body: JSON.stringify(updatedAssignment),
-        }
-      );
-
-      if (response.ok) {
-        console.log("Assignment updated successfully.");
-        fetchAssignments(user.user_id); // Refresh assignments after updating
-        setEditModalOpen(false); // Close the edit modal
-      } else {
-        const errorMsg = await response.text();
-        console.error("Failed to update assignment:", errorMsg);
-        alert(`Failed to update assignment: ${errorMsg}`);
-      }
-    } catch (error) {
-      console.error("Error updating assignment:", error);
-      alert("An error occurred while updating the assignment.");
-    }
   };
 
   const handleDeleteAssignment = async (assignmentId) => {
@@ -196,48 +217,60 @@ const HomeworkDashboard = () => {
         </Box>
       </Box>
 
-      {/* Stats Overview */}
-      <Grid container spacing={2} marginBottom={3}>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardHeader title="Total Assignments" />
-            <CardContent>
-              <Typography variant="h5">{assignments.length}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+      {/* Calendar View */}
+      {view === "calendar" && <CalendarView dueDates={dueDates} />}
 
-      {/* Assignments List */}
-      {assignments.length > 0 ? (
-        assignments.map((assignment) => (
-          <Card key={assignment.homework_id} sx={{ marginBottom: 2 }}>
-            <CardContent>
-              <Typography variant="h6">{assignment.title}</Typography>
-              <Typography variant="body2">{assignment.description}</Typography>
-              <Typography variant="caption">
-                Due: {assignment.due_date}
-              </Typography>
-              <Box sx={{ display: "flex", gap: 1, marginTop: 1 }}>
-                <Button
-                  startIcon={<Edit />}
-                  onClick={() => handleEditAssignment(assignment)}
-                >
-                  Edit
-                </Button>
-                <Button
-                  startIcon={<Delete />}
-                  color="error"
-                  onClick={() => handleDeleteAssignment(assignment.homework_id)}
-                >
-                  Delete
-                </Button>
-              </Box>
-            </CardContent>
-          </Card>
-        ))
-      ) : (
-        <Alert severity="info">No assignments found.</Alert>
+      {/* List View */}
+      {view === "list" && (
+        <>
+          {/* Stats Overview */}
+          <Grid container spacing={2} marginBottom={3}>
+            <Grid item xs={12} sm={6} md={3}>
+              <Card>
+                <CardHeader title="Total Assignments" />
+                <CardContent>
+                  <Typography variant="h5">{assignments.length}</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+
+          {/* Assignments List */}
+          {assignments.length > 0 ? (
+            assignments.map((assignment) => (
+              <Card key={assignment.homework_id} sx={{ marginBottom: 2 }}>
+                <CardContent>
+                  <Typography variant="h6">{assignment.title}</Typography>
+                  <Typography variant="body2">
+                    {assignment.description}
+                  </Typography>
+                  <Typography variant="caption">
+                    Due: {assignment.due_date}
+                  </Typography>
+                  <Box sx={{ display: "flex", gap: 1, marginTop: 1 }}>
+                    <Button
+                      startIcon={<Edit />}
+                      onClick={() => handleEditAssignment(assignment)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      startIcon={<Delete />}
+                      color="error"
+                      onClick={() =>
+                        handleDeleteAssignment(assignment.homework_id)
+                      }
+                    >
+                      Delete
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <Alert severity="info">No assignments found.</Alert>
+          )}
+        </>
       )}
 
       {/* Add Assignment Modal */}
@@ -258,7 +291,7 @@ const HomeworkDashboard = () => {
         <EditAssignment
           open={isEditModalOpen}
           onClose={() => setEditModalOpen(false)}
-          onSubmit={handleUpdateAssignment}
+          onSubmit={fetchAssignments}
           sessionKey={localStorage.getItem("sessionKey")}
           homework={selectedAssignment}
         />
