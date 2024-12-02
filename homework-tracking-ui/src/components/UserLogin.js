@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Box, Typography, Alert } from "@mui/material";
+import "../styles/Login.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -41,58 +42,58 @@ const Login = () => {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh",
-      }}
-    >
-      <Typography variant="h4" gutterBottom>
-        Login
-      </Typography>
-      {error && (
-        <Alert severity="error" sx={{ marginBottom: 2 }}>
-          {error}
-        </Alert>
-      )}
-      <form onSubmit={handleLogin}>
-        <TextField
-          label="Email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          fullWidth
-          sx={{ marginBottom: 2 }}
-        />
-        <TextField
-          label="Password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          fullWidth
-          sx={{ marginBottom: 2 }}
-        />
-        <Button
-          type="submit"
-          variant="contained"
-          fullWidth
-          sx={{ marginBottom: 2 }}
-        >
-          Login
-        </Button>
-        <Button
-          variant="text"
-          fullWidth
-          onClick={() => navigate("/signup")} // Navigate to Signup page
-        >
-          Don't have an account? Sign Up
-        </Button>
-      </form>
+    <Box className="login-page">
+      <Box className="login-container">
+        <div className="login-header">
+          <img
+            src="https://www.rit.edu/brandportal/sites/rit.edu.brandportal/files/2022-10/RIT-00071A_RGB_whiteTM.jpg"
+            alt="Homework Tracker Logo"
+          />
+          <Typography variant="h4" component="h1" className="login-title">
+            Homework Tracker
+          </Typography>
+        </div>
+        {error && (
+          <Alert severity="error" sx={{ marginBottom: 2 }}>
+            {error}
+          </Alert>
+        )}
+        <form className="login-form" onSubmit={handleLogin}>
+          <TextField
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            fullWidth
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            fullWidth
+            sx={{ marginBottom: 2 }}
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            sx={{ marginBottom: 2 }}
+          >
+            Login
+          </Button>
+          <Button
+            variant="text"
+            fullWidth
+            onClick={() => navigate("/signup")} // Navigate to Signup page
+          >
+            Don't have an account? Sign Up
+          </Button>
+        </form>
+      </Box>
     </Box>
   );
 };

@@ -1,0 +1,54 @@
+.dashboard-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.dashboard-header-left {
+  display: flex;
+  align-items: center;
+}
+
+.dashboard-logo {
+  width: 50px;
+  height: auto;
+  margin-right: 16px;
+}
+
+.dashboard-actions .dashboard-button {
+  margin-right: 8px;
+}
+
+.add-assignment-button {
+  margin-left: 8px;
+}
+
+/* Sort By Priority Container */
+.sort-priority-container {
+  margin-bottom: 16px; /* Add spacing below the dropdown */
+}
+
+/* Fix Dropdown Overflow */
+.sort-priority-container select {
+  white-space: nowrap; /* Prevents text from wrapping */
+  overflow: hidden; /* Prevents content overflow */
+  text-overflow: ellipsis; /* Adds "..." if text overflows */
+}
+
+/* Stats Overview Styling */
+.stats-overview {
+  margin-bottom: 24px; /* Adds spacing between "Sort By Priority" and "Total Assignments" */
+}
+
+.stats-card {
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}

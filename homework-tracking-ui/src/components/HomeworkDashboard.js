@@ -9,6 +9,7 @@ import {
   CardHeader,
   Alert,
 } from "@mui/material";
+import "../styles/homeworkdashboard.css";
 import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -135,6 +136,13 @@ const HomeworkDashboard = () => {
     }
   };
 
+  const handleViewChange = (viewType) => {
+    setView(viewType);
+    if (viewType === "calendar" && user) {
+      fetchDueDates(user.user_id); // Ensure due dates are refreshed when switching to calendar
+    }
+  };
+
   const handleEditAssignment = (assignment) => {
     setSelectedAssignment(assignment);
     setEditModalOpen(true);
@@ -228,40 +236,49 @@ const HomeworkDashboard = () => {
   }
 
   return (
-    <Box sx={{ padding: 3, maxWidth: "1200px", margin: "auto" }}>
+    <Box className="dashboard-container">
       {/* Header Section */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 3,
-        }}
-      >
-        <Typography variant="h4" fontWeight="bold">
-          My Homework Dashboard
-        </Typography>
-        <Box>
+      <Box className="dashboard-header">
+        <Box className="dashboard-header-left">
+          <img
+            src="https://www.rit.edu/brandportal/sites/rit.edu.brandportal/files/2022-10/RIT-00071A_RGB_whiteTM.jpg"
+            alt="Homework Tracker Logo"
+            className="dashboard-logo"
+          />
+          <Typography
+            className="dashboard-title"
+            variant="h4"
+            fontWeight="bold"
+          >
+            My Homework Dashboard
+          </Typography>
+        </Box>
+        <Box className="dashboard-actions">
           <Button
+            className={`dashboard-button ${
+              view === "list" ? "button-active" : "button-inactive"
+            }`}
             variant={view === "list" ? "contained" : "outlined"}
             startIcon={<List />}
-            sx={{ marginRight: 1 }}
             onClick={() => setView("list")}
           >
             List View
           </Button>
           <Button
+            className={`dashboard-button ${
+              view === "calendar" ? "button-active" : "button-inactive"
+            }`}
             variant={view === "calendar" ? "contained" : "outlined"}
             startIcon={<CalendarToday />}
-            onClick={() => setView("calendar")}
+            onClick={() => handleViewChange("calendar")}
           >
             Calendar View
           </Button>
           <Button
+            className="add-assignment-button"
             variant="contained"
             color="primary"
             startIcon={<Add />}
-            sx={{ marginLeft: 1 }}
             onClick={() => setAddModalOpen(true)}
           >
             Add Assignment
@@ -271,11 +288,13 @@ const HomeworkDashboard = () => {
       </Box>
 
       {/* Calendar View */}
-      {view === "calendar" && <CalendarView dueDates={dueDates} />}
+      {view === "calendar" && (
+        <CalendarView className="calendar-view" dueDates={dueDates} />
+      )}
 
       {/* Sort By Priority */}
       {view === "list" && (
-        <Box sx={{ marginBottom: 3 }}>
+        <Box className="sort-priority-container">
           <SortByPriority priority={priority} setPriority={setPriority} />
         </Box>
       )}
@@ -284,12 +303,14 @@ const HomeworkDashboard = () => {
       {view === "list" && (
         <>
           {/* Stats Overview */}
-          <Grid container spacing={2} marginBottom={3}>
+          <Grid className="stats-overview" container spacing={2}>
             <Grid item xs={12} sm={6} md={3}>
-              <Card>
+              <Card className="stats-card">
                 <CardHeader title="Total Assignments" />
                 <CardContent>
-                  <Typography variant="h5">{assignments.length}</Typography>
+                  <Typography className="stats-value" variant="h5">
+                    {assignments.length}
+                  </Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -300,24 +321,27 @@ const HomeworkDashboard = () => {
             assignments.map((assignment) => (
               <Card
                 key={assignment.homework_id}
-                sx={{
-                  marginBottom: 2,
-                  textDecoration: assignment.is_completed
-                    ? "line-through"
-                    : "none",
-                }}
+                className={`assignment-card ${
+                  assignment.is_completed ? "assignment-completed" : ""
+                }`}
               >
                 <CardContent>
-                  <Typography variant="h6">{assignment.title}</Typography>
-                  <Typography variant="body2">
+                  <Typography className="assignment-title" variant="h6">
+                    {assignment.title}
+                  </Typography>
+                  <Typography
+                    className="assignment-description"
+                    variant="body2"
+                  >
                     {assignment.description}
                   </Typography>
-                  <Typography variant="caption">
+                  <Typography className="assignment-due-date" variant="caption">
                     Due: {assignment.due_date}
                   </Typography>
-                  <Box sx={{ display: "flex", gap: 1, marginTop: 1 }}>
+                  <Box className="assignment-actions">
                     {!assignment.is_completed && (
                       <Button
+                        className="mark-completed-button"
                         startIcon={<CheckCircle />}
                         color="success"
                         onClick={() =>
@@ -327,13 +351,11 @@ const HomeworkDashboard = () => {
                         Mark as Completed
                       </Button>
                     )}
-                    <Button
-                      startIcon={<Edit />}
-                      onClick={() => handleEditAssignment(assignment)}
-                    >
+                    <Button className="edit-button" startIcon={<Edit />}>
                       Edit
                     </Button>
                     <Button
+                      className="delete-button"
                       startIcon={<Delete />}
                       color="error"
                       onClick={() =>
@@ -347,7 +369,9 @@ const HomeworkDashboard = () => {
               </Card>
             ))
           ) : (
-            <Alert severity="info">No assignments found.</Alert>
+            <Alert className="no-assignments-alert" severity="info">
+              No assignments found.
+            </Alert>
           )}
         </>
       )}
@@ -358,11 +382,12 @@ const HomeworkDashboard = () => {
         onClose={() => setAddModalOpen(false)}
         onSubmit={() => {
           if (user) {
-            fetchAssignments(user.user_id, priority); // Refresh assignments list after adding
+            fetchAssignments(user.user_id, priority);
+            fetchDueDates(user.user_id);
           }
         }}
-        sessionKey={localStorage.getItem("sessionKey")} // Pass session key
-        userId={user.user_id} // Pass user ID
+        sessionKey={localStorage.getItem("sessionKey")}
+        userId={user.user_id}
       />
 
       {/* Edit Assignment Modal */}
