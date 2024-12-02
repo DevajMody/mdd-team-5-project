@@ -331,3 +331,31 @@ class DueDates(Resource):
             # Log the full error for debugging
             print(f"Error in get method: {e}")
             return {"message": str(e)}, 500
+
+class HomeworkByPriority(Resource):
+    def get(self, priority):
+        session_key = request.headers.get("Session-Key")
+        
+        if not session_key:
+            return {"message": "Session key is required"}, 401
+
+        user = get_user_by_session_key(session_key)
+        
+        if not user:
+            return {"message": "Unauthorized. Please log in."}, 401
+
+        user_id = user["user_id"]
+
+        # Validate priority
+        if priority not in ["High", "Normal", "Low"]:
+            return {"message": f"Invalid priority: {priority}"}, 400
+
+        try:
+            # Fetch homework by priority from the database
+            homework_list = get_homework_by_priority(user_id, priority)
+            return {"homework": homework_list}, 200
+        except Exception as e:
+            print(f"Error in HomeworkByPriority.get(): {e}")
+            return {"message": f"Error fetching homework by priority: {e}"}, 500
+
+

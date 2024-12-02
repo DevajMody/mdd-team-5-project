@@ -25,6 +25,7 @@ import AddAssignment from "./AddAssignment";
 import EditAssignment from "./EditAssignment";
 import Logout from "./Logout";
 import CalendarView from "./CalendarView";
+import SortByPriority from "./SortByPriority";
 import { useNavigate } from "react-router-dom";
 
 const locales = { "en-US": enUS };
@@ -38,6 +39,8 @@ const localizer = dateFnsLocalizer({
 
 const HomeworkDashboard = () => {
   const [assignments, setAssignments] = useState([]); // Assignments state
+  const [filteredAssignments, setFilteredAssignments] = useState([]); // Filtered by priority
+  // const [priority, setPriority] = useState("All"); // Priority filter state
   const [events, setEvents] = useState([]); // Calendar events
   const [user, setUser] = useState(null); // User state
   const [view, setView] = useState("list"); // 'list' or 'calendar'
@@ -46,6 +49,7 @@ const HomeworkDashboard = () => {
   const [selectedAssignment, setSelectedAssignment] = useState(null); // Selected assignment for editing
   const [dueDates, setDueDates] = useState([]);
   const navigate = useNavigate();
+  const [priority, setPriority] = useState("All");
 
   const fetchUser = async () => {
     const sessionKey = localStorage.getItem("sessionKey");
@@ -81,17 +85,19 @@ const HomeworkDashboard = () => {
 
   const fetchAssignments = async (userId) => {
     try {
-      const response = await fetch(
-        `http://localhost:8001/homework/user/${userId}`,
-        {
-          headers: {
-            "Session-Key": localStorage.getItem("sessionKey"),
-          },
-        }
-      );
+      const url =
+        priority === "All"
+          ? `http://localhost:8001/homework/user/${userId}`
+          : `http://localhost:8001/homework/priority/${priority}`;
+      const response = await fetch(url, {
+        headers: {
+          "Session-Key": localStorage.getItem("sessionKey"),
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setAssignments(data.homework || []);
+        setFilteredAssignments(data.homework || []);
         const calendarEvents = data.homework.map((hw) => ({
           title: hw.title,
           start: new Date(hw.due_date),
@@ -196,10 +202,26 @@ const HomeworkDashboard = () => {
 
   useEffect(() => {
     if (user) {
-      fetchAssignments(user.user_id);
-      fetchDueDates(user.user_id); // Fetch assignments after user details are loaded
+      fetchAssignments(user.user_id, priority);
+    }
+  }, [user, priority]);
+
+  useEffect(() => {
+    if (user) {
+      fetchDueDates(user.user_id); // Fetch due dates for the calendar
     }
   }, [user]);
+
+  // Update filtered assignments when priority changes
+  // useEffect(() => {
+  //   if (priority === "All") {
+  //     setFilteredAssignments(assignments);
+  //   } else {
+  //     setFilteredAssignments(
+  //       assignments.filter((a) => a.priority === priority)
+  //     );
+  //   }
+  // }, [priority, assignments]);
 
   if (!user) {
     return <Typography>Loading...</Typography>;
@@ -250,6 +272,13 @@ const HomeworkDashboard = () => {
 
       {/* Calendar View */}
       {view === "calendar" && <CalendarView dueDates={dueDates} />}
+
+      {/* Sort By Priority */}
+      {view === "list" && (
+        <Box sx={{ marginBottom: 3 }}>
+          <SortByPriority priority={priority} setPriority={setPriority} />
+        </Box>
+      )}
 
       {/* List View */}
       {view === "list" && (
@@ -329,7 +358,7 @@ const HomeworkDashboard = () => {
         onClose={() => setAddModalOpen(false)}
         onSubmit={() => {
           if (user) {
-            fetchAssignments(user.user_id); // Refresh assignments list after adding
+            fetchAssignments(user.user_id, priority); // Refresh assignments list after adding
           }
         }}
         sessionKey={localStorage.getItem("sessionKey")} // Pass session key

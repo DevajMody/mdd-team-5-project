@@ -23,6 +23,8 @@ api.add_resource(
 )
 api.add_resource(GetUserData, "/user/<int:user_id>", endpoint="get_user_data")
 api.add_resource(DueDates, "/homework/due_dates/<int:user_id>", endpoint="due_dates")
+# Add the new endpoint to your API
+api.add_resource(HomeworkByPriority, "/homework/priority/<string:priority>", endpoint="homework_by_priority")
 
 
 # Homework APIs
