@@ -139,7 +139,7 @@ const AddAssignment = ({ open, onClose, onSubmit, sessionKey, userId }) => {
               required
             >
               <MenuItem value="High">High</MenuItem>
-              <MenuItem value="Medium">Medium</MenuItem>
+              <MenuItem value="Normal">Medium</MenuItem>
               <MenuItem value="Low">Low</MenuItem>
             </Select>
           </FormControl>
