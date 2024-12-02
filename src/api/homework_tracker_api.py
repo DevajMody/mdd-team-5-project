@@ -1,7 +1,7 @@
 from flask_restful import Resource, request, reqparse
-from src.db.swen610_db_utils import *
-from src.db.homework_tracker_db import *
-from src.db.homework_tracker_db import rebuild_tables, deleteTables
+from db.swen610_db_utils import *
+from db.homework_tracker_db import *
+from db.homework_tracker_db import rebuild_tables, deleteTables
 import traceback
 
 

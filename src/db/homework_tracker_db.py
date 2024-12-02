@@ -1,5 +1,5 @@
 # from swen610_db_utils import *
-from src.db.swen610_db_utils import *
+from .swen610_db_utils import *
 from psycopg2 import sql
 import hashlib
 import uuid
