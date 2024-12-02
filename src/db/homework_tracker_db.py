@@ -5,9 +5,11 @@ import hashlib
 import uuid
 from datetime import datetime
 
+
 def generate_session_key():
     """Generates a unique session key."""
     return str(uuid.uuid4())
+
 
 def update_session_key(user_id, session_key):
     conn = connect()
@@ -20,6 +22,7 @@ def update_session_key(user_id, session_key):
     cur.execute(query, (session_key, user_id))
     conn.commit()
     conn.close()
+
 
 def clear_session_key(user_id):
     conn = connect()
@@ -49,12 +52,14 @@ def get_user_by_session_key(session_key):
         return {"user_id": user[0], "user_name": user[1], "email": user[2]}
     return None
 
+
 def rebuild_tables():
     try:
         exec_sql_file("src/db/schema.sql")  # Ensure the correct path to schema.sql
         print("Tables rebuilt successfully")
     except Exception as e:
         print(f"Error in rebuild_tables: {e}")
+
 
 def deleteTables():
     conn = connect()
@@ -67,11 +72,14 @@ def deleteTables():
     conn.commit()
     conn.close()
 
+
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
+
 def verify_password(stored_password, provided_password):
     return stored_password == hash_password(provided_password)
+
 
 def signup(name, email, password):
     conn = connect()
@@ -86,6 +94,7 @@ def signup(name, email, password):
     conn.commit()
     conn.close()
     return user_id
+
 
 def signin(email, password):
     conn = connect()
@@ -108,11 +117,12 @@ def signin(email, password):
             "user_id": user[0],
             "user_name": user[1],
             "email": user[2],
-            "session_key": session_key
+            "session_key": session_key,
         }
     return None
 
-def create_homework(user_id, title, description, due_date):
+
+def create_homework(user_id, title, description, due_date, priority="Normal"):
     conn = connect()
     cur = conn.cursor()
     try:
@@ -128,16 +138,16 @@ def create_homework(user_id, title, description, due_date):
 
         # Print debug information
         print(f"Creating homework - User ID: {user_id}, Title: {title}")
-        
+
         query = """
-        INSERT INTO homework (user_id, title, description, created_date, due_date, is_completed)
-        VALUES (%s, %s, %s, CURRENT_TIMESTAMP, %s, false) 
+        INSERT INTO homework (user_id, title, description, created_date, due_date, is_completed, priority)
+        VALUES (%s, %s, %s, CURRENT_TIMESTAMP, %s, false, %s) 
         RETURNING homework_id
         """
-        cur.execute(query, (user_id, title, description, due_date))
+        cur.execute(query, (user_id, title, description, due_date, priority))
         homework_id = cur.fetchone()[0]
         conn.commit()
-        
+
         print(f"Homework created successfully with ID: {homework_id}")
         return homework_id
     except Exception as e:
@@ -148,6 +158,7 @@ def create_homework(user_id, title, description, due_date):
     finally:
         cur.close()
         conn.close()
+
 
 def delete_homework(homework_id):
     conn = connect()
@@ -162,7 +173,15 @@ def delete_homework(homework_id):
     conn.close()
     return "Homework deleted successfully"
 
-def edit_homework(homework_id, title=None, description=None, due_date=None, is_completed=None):
+
+def edit_homework(
+    homework_id,
+    title=None,
+    description=None,
+    due_date=None,
+    is_completed=None,
+    priority=None,
+):
     conn = connect()
     cur = conn.cursor()
     cur.execute("SELECT * FROM homework WHERE homework_id = %s", (homework_id,))
@@ -181,9 +200,12 @@ def edit_homework(homework_id, title=None, description=None, due_date=None, is_c
     if due_date:
         update_fields.append("due_date = %s")
         update_values.append(due_date)
-    if is_completed:
+    if is_completed is not None:
         update_fields.append("is_completed = %s")
         update_values.append(is_completed)
+    if priority:
+        update_fields.append("priority = %s")
+        update_values.append(priority)
 
     update_values.append(homework_id)
     cur.execute(
@@ -195,6 +217,7 @@ def edit_homework(homework_id, title=None, description=None, due_date=None, is_c
     conn.commit()
     conn.close()
     return "Homework updated successfully"
+
 
 def change_password(user_id, new_password):
     conn = connect()
@@ -212,6 +235,7 @@ def change_password(user_id, new_password):
     conn.close()
     return "Password changed successfully"
 
+
 def get_user_data(user_id):
     conn = connect()
     cur = conn.cursor()
@@ -220,13 +244,14 @@ def get_user_data(user_id):
     conn.close()
     return user_data if user_data else []
 
+
 def view_homework(user_id):
     conn = connect()
     cur = conn.cursor()
     try:
         query = """
         SELECT t.homework_id, t.user_id, t.title, t.description, t.category_id, 
-               t.created_date, t.due_date, c.category_name, t.is_completed
+               t.created_date, t.due_date, c.category_name, t.is_completed, t.priority
         FROM homework t
         LEFT JOIN categories c ON t.category_id = c.category_id
         WHERE t.user_id = %s
@@ -242,13 +267,14 @@ def view_homework(user_id):
         cur.close()
         conn.close()
 
+
 def get_homework(homework_id):
     conn = connect()
     cur = conn.cursor()
     try:
         query = """
         SELECT t.homework_id, t.user_id, t.title, t.description, t.category_id, 
-               t.created_date, t.due_date, c.category_name, t.is_completed
+               t.created_date, t.due_date, c.category_name, t.is_completed,  t.priority
         FROM homework t
         LEFT JOIN categories c ON t.category_id = c.category_id
         WHERE t.homework_id = %s
@@ -263,6 +289,7 @@ def get_homework(homework_id):
         cur.close()
         conn.close()
 
+
 def add_category(category_name):
     conn = connect()
     cur = conn.cursor()
@@ -276,6 +303,7 @@ def add_category(category_name):
     conn.close()
     return category_id
 
+
 def delete_category(category_id):
     conn = connect()
     cur = conn.cursor()
@@ -288,6 +316,7 @@ def delete_category(category_id):
     conn.commit()
     conn.close()
     return "Category deleted successfully"
+
 
 def assign_category(homework_id, category_id):
     conn = connect()
@@ -303,11 +332,13 @@ def assign_category(homework_id, category_id):
         return "Category does not exist"
 
     cur.execute(
-        "UPDATE homework SET category_id = %s WHERE homework_id = %s", (category_id, homework_id)
+        "UPDATE homework SET category_id = %s WHERE homework_id = %s",
+        (category_id, homework_id),
     )
     conn.commit()
     conn.close()
     return "Category assigned to homework successfully"
+
 
 def remove_category(homework_id):
     conn = connect()
@@ -317,7 +348,9 @@ def remove_category(homework_id):
         conn.close()
         return "Homework does not exist"
 
-    cur.execute("UPDATE homework SET category_id = NULL WHERE homework_id = %s", (homework_id,))
+    cur.execute(
+        "UPDATE homework SET category_id = NULL WHERE homework_id = %s", (homework_id,)
+    )
     conn.commit()
     conn.close()
     return "Category removed from homework successfully"
@@ -344,11 +377,13 @@ def get_due_dates_from_db(user_id):
         # Format the result into a list of dictionaries
         result = []
         for hw in homework:
-            result.append({
-                "homework_id": hw[0],
-                "title": hw[1],
-                "due_date": hw[2],  # Keep the datetime object as is
-            })
+            result.append(
+                {
+                    "homework_id": hw[0],
+                    "title": hw[1],
+                    "due_date": hw[2],  # Keep the datetime object as is
+                }
+            )
         return result
     except Exception as e:
         raise Exception(f"Error fetching due dates: {e}")

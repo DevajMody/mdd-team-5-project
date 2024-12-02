@@ -24,13 +24,21 @@ class TestHomeworkManager(unittest.TestCase):
 
         # Create homework for users
         self.homework1_id = create_homework(
-            self.user1_id, "Create repo", "Push db connector code", "2024-12-01T12:00:00"
+            self.user1_id,
+            "Create repo",
+            "Push db connector code",
+            "2024-12-01T12:00:00",
+            "High",
         )
         self.homework2_id = create_homework(
-            self.user1_id, "Setup database", "Make tables", "2024-12-05T12:00:00"
+            self.user1_id,
+            "Setup database",
+            "Make tables",
+            "2024-12-05T12:00:00",
+            "Normal",
         )
         self.homework3_id = create_homework(
-            self.user2_id, "Setup API base", "Make routes", "2024-12-10T12:00:00"
+            self.user2_id, "Setup API base", "Make routes", "2024-12-10T12:00:00", "Low"
         )
 
     def test_signup(self):
@@ -47,7 +55,11 @@ class TestHomeworkManager(unittest.TestCase):
     def test_create_homework(self):
         """Test creating a homework"""
         homework_id = create_homework(
-            self.user3_id, "Design DB schema", "Insert test data", "2024-12-01T12:00:00"  # Added due_date field
+            self.user3_id,
+            "Design DB schema",
+            "Insert test data",
+            "2024-12-01T12:00:00",
+            "Normal",
         )
         self.assertIsNotNone(homework_id, "Create homework should return a homework ID")
 
@@ -55,7 +67,9 @@ class TestHomeworkManager(unittest.TestCase):
         """Test deleting a homework"""
         response = delete_homework(self.homework1_id)
         self.assertEqual(
-            response, "Homework deleted successfully", "Should confirm homework deletion"
+            response,
+            "Homework deleted successfully",
+            "Should confirm homework deletion",
         )
 
     def test_edit_homework(self):
@@ -64,8 +78,9 @@ class TestHomeworkManager(unittest.TestCase):
             self.homework2_id,
             title="Setup database updated",
             description="Make tables updated",
-            due_date="2024-12-15T12:00:00",  # Added due_date field
-            is_completed=False
+            due_date="2024-12-15T12:00:00",
+            is_completed=False,
+            priority="High",
         )
         self.assertEqual(
             response, "Homework updated successfully", "Should confirm homework update"
@@ -89,10 +104,14 @@ class TestHomeworkManager(unittest.TestCase):
         homework = view_homework(self.user1_id)
         self.assertEqual(len(homework), 2, "User should have 2 homework")
         self.assertEqual(
-            homework[0][2], "Create repo", "First homework title should be 'Create repo'"
+            homework[0][2],
+            "Create repo",
+            "First homework title should be 'Create repo'",
         )
         self.assertEqual(
-            homework[1][2], "Setup database", "Second homework title should be 'Setup database'"
+            homework[1][2],
+            "Setup database",
+            "Second homework title should be 'Setup database'",
         )
 
     def test_add_category(self):
@@ -131,9 +150,9 @@ class TestHomeworkManager(unittest.TestCase):
             "Should confirm category removal",
         )
 
-    # def tearDown(self):
-    #     """Clean up the test database by deleting the tables"""
-    #     deleteTables()
+    def tearDown(self):
+        """Clean up the test database by deleting the tables"""
+        deleteTables()
 
 
 if __name__ == "__main__":

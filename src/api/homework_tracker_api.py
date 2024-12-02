@@ -23,9 +23,11 @@ class TearDown(Resource):
 class SignUp(Resource):
     def post(self):
         try:
-            data = request.get_json(force=True)  # Force parsing even if content-type is not set
+            data = request.get_json(
+                force=True
+            )  # Force parsing even if content-type is not set
             print("Received data:", data)  # Debug log
-            
+
             if not data:
                 print("No data received")
                 return {"message": "No data provided"}, 400
@@ -36,7 +38,10 @@ class SignUp(Resource):
 
             # More detailed validation
             if not all([name, email, password]):
-                print("Missing fields:", {"name": name, "email": email, "password": bool(password)})
+                print(
+                    "Missing fields:",
+                    {"name": name, "email": email, "password": bool(password)},
+                )
                 return {"message": "Missing required fields"}, 400
 
             user_id = signup(name, email, password)
@@ -46,8 +51,6 @@ class SignUp(Resource):
             print(f"Signup Error: {str(e)}")
             print(traceback.format_exc())
             return {"message": f"Internal server error: {str(e)}"}, 500
-
-
 
 
 class SignIn(Resource):
@@ -81,7 +84,6 @@ class Logout(Resource):
             return {"message": f"Error during logout: {str(e)}"}, 500
 
 
-
 class ChangePassword(Resource):
     def put(self, user_id):
         data = request.get_json()
@@ -106,7 +108,6 @@ class GetUserData(Resource):
         return {"user_data": user}, 200
 
 
-
 class CreateHomework(Resource):
     def post(self):
         session_key = request.headers.get("Session-Key")
@@ -128,9 +129,12 @@ class CreateHomework(Resource):
 
         parser = reqparse.RequestParser()
         parser.add_argument("title", required=True, help="Title is required")
-        parser.add_argument("description", required=True, help="Description is required")
+        parser.add_argument(
+            "description", required=True, help="Description is required"
+        )
         parser.add_argument("due_date", required=True, help="Due date is required")
-        
+        parser.add_argument("priority", required=True, help="Priority is required")
+
         try:
             args = parser.parse_args()
         except Exception as parse_error:
@@ -140,10 +144,11 @@ class CreateHomework(Resource):
         try:
             # Ensure due_date is in a valid format if needed
             homework_id = create_homework(
-                user_id, 
-                args["title"], 
-                args["description"], 
-                args["due_date"]
+                user_id,
+                args["title"],
+                args["description"],
+                args["due_date"],
+                args["priority"],
             )
             return {"homework_id": homework_id}, 201
         except Exception as e:
@@ -165,7 +170,6 @@ class DeleteHomework(Resource):
         return {"message": response}, 404
 
 
-
 class EditHomework(Resource):
     def put(self, homework_id):
         session_key = request.headers.get("Session-Key")
@@ -179,12 +183,14 @@ class EditHomework(Resource):
         description = data.get("description")
         due_date = data.get("due_date")
         is_completed = data.get("is_completed")
+        priority = data.get("priority")
 
-        response = edit_homework(homework_id, title, description, due_date, is_completed)
+        response = edit_homework(
+            homework_id, title, description, due_date, is_completed, priority
+        )
         if response == "Homework updated successfully":
             return {"message": response}, 200
         return {"message": response}, 400
-
 
 
 class ViewHomeworks(Resource):
@@ -208,13 +214,12 @@ class ViewHomeworks(Resource):
                 "due_date": str(hw[6]) if hw[6] else None,
                 "category_name": hw[7] if len(hw) > 7 else None,
                 "is_completed": hw[8] if hw[8] else None,
+                "priority": hw[9] if hw[9] else None,  # Added priority field
             }
             homework_list.append(homework_dict)
         return {"homework": homework_list}, 200
 
 
-    
-    
 class GetHomework(Resource):
     def get(self, homework_id):
         session_key = request.headers.get("Session-Key")
@@ -237,9 +242,9 @@ class GetHomework(Resource):
             "due_date": str(homework[6]) if homework[6] else None,
             "category_name": homework[7] if len(homework) > 7 else None,
             "is_completed": homework[8] if homework[8] else None,
+            "priority": homework[9] if homework[9] else None,  # Added priority field
         }
         return {"homework": homework_dict}, 200
-
 
 
 class AddCategory(Resource):
@@ -254,7 +259,6 @@ class AddCategory(Resource):
         category_name = data.get("category_name")
         category_id = add_category(category_name)
         return {"category_id": category_id}, 201
-
 
 
 class DeleteCategory(Resource):
@@ -285,7 +289,6 @@ class AssignCategory(Resource):
         return {"message": response}, 400
 
 
-
 class RemoveCategory(Resource):
     def put(self, homework_id):
         session_key = request.headers.get("Session-Key")
@@ -298,6 +301,7 @@ class RemoveCategory(Resource):
         if response == "Category removed from homework successfully":
             return {"message": response}, 200
         return {"message": response}, 400
+
 
 class DueDates(Resource):
     def get(self, user_id):
@@ -318,8 +322,8 @@ class DueDates(Resource):
             for hw in homework_list:
                 # Ensure due_date is converted to string
                 processed_hw = hw.copy()
-                if isinstance(processed_hw['due_date'], datetime):
-                    processed_hw['due_date'] = processed_hw['due_date'].isoformat()
+                if isinstance(processed_hw["due_date"], datetime):
+                    processed_hw["due_date"] = processed_hw["due_date"].isoformat()
                 processed_homework_list.append(processed_hw)
 
             return {"due_dates": processed_homework_list}, 200
