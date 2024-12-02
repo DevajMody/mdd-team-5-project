@@ -1,0 +1,4 @@
+pip3 install coverage
+coverage run -m unittest tests/db/test_db_functions.py tests/api/test_api.py
+coverage html --include=tests/api/test_api.py,tests/db/test_db_functions.py
+open htmlcov/index.html ⁠            
