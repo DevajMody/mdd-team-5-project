@@ -191,3 +191,7 @@ Admin-related use case:
 ### Class Diagram
   
 ![Use Case Diagram](images/class_diagram.png)
+
+### Test Coveerage 
+
+![Tests Coverage](test_cov.png)
