@@ -1,0 +1,138 @@
+/* Global Styles */
+body {
+  font-family: "Roboto", Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+header {
+  background-color: #ff7700;
+  color: #ffffff;
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Buttons */
+button {
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+button.primary {
+  background-color: #ff7700;
+  color: #ffffff;
+}
+
+button.primary:hover {
+  background-color: #e66600;
+}
+
+button.secondary {
+  background-color: #ffffff;
+  color: #000000;
+  border: 2px solid #000000;
+}
+
+button.secondary:hover {
+  background-color: #f3f3f3;
+}
+
+/* Cards */
+.card {
+  background-color: #ffffff;
+  border: 1px solid #ff7700;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+  padding: 15px;
+  color: #000000;
+}
+
+.card h6 {
+  color: #ff7700;
+}
+
+/* Calendar */
+.calendar-container {
+  margin: 20px 0;
+  border: 2px solid #ff7700;
+  border-radius: 5px;
+  background-color: #ffffff;
+}
+
+.rbc-toolbar {
+  background-color: #ff7700;
+  color: #ffffff;
+  padding: 10px;
+  border-radius: 5px 5px 0 0;
+}
+
+.rbc-event {
+  background-color: #ff7700;
+  color: #ffffff;
+}
+
+/* Header/Footer */
+footer {
+  background-color: #000000;
+  color: #ffffff;
+  text-align: center;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+}
+
+/* Modal */
+.modal {
+  background-color: #ffffff;
+  border: 2px solid #ff7700;
+  border-radius: 5px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Alerts */
+.alert {
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+.alert-info {
+  background-color: #fff8e1;
+  border-left: 5px solid #ff7700;
+  color: #000000;
+}
+
+/* Forms */
+input,
+select {
+  border: 2px solid #ff7700;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 1rem;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #e66600;
+}
+
+/* Utility */
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+.text-center {
+  text-align: center;
+}

@@ -1,63 +1,67 @@
-/* Main page styles */
+/* src/styles/Login.css */
+@import "./App.css";
+
 .login-page {
   display: flex;
-  height: 100vh;
-}
-
-/* Left-side image container */
-.login-left {
-  flex: 1;
-  background-color: #f56a00;
-  display: flex;
   justify-content: center;
   align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
 }
 
-.rit-logo {
-  max-width: 70%;
-  height: auto;
+.login-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  width: 400px;
+  text-align: center;
 }
 
-/* Right-side login container */
-.login-right {
-  flex: 1;
-  padding: 50px;
+.login-header {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  margin-bottom: 20px;
 }
 
-h2 {
-  color: #f56a00;
+.login-header img {
+  width: 100px;
+  margin-bottom: 10px;
+}
+
+.login-title {
   font-size: 24px;
-  margin-bottom: 20px;
+  font-weight: 700;
+  color: #333;
 }
 
-/* Tabs */
-.tabs {
-  margin-bottom: 20px;
-}
-
-/* Form styles */
 .login-form {
-  width: 100%;
-  max-width: 400px;
+  display: flex;
+  flex-direction: column;
 }
 
-.MuiButton-containedPrimary {
-  background-color: #f56a00;
+.login-form button {
+  margin-top: 10px;
 }
 
-.MuiButton-containedPrimary:hover {
-  background-color: #d45500;
+.login-link {
+  text-align: center;
+  margin-top: 10px;
 }
 
-/* Admin login button */
-.MuiButton-textPrimary {
-  color: #f56a00;
+.login-link a {
+  color: #4caf50;
+  text-decoration: none;
 }
 
-.MuiButton-textPrimary:hover {
-  color: #d45500;
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    width: 90%;
+    padding: 16px;
+  }
 }

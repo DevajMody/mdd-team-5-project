@@ -9,6 +9,7 @@ import {
   CardHeader,
   Alert,
 } from "@mui/material";
+import "../styles/homeworkdashboard.css";
 import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -25,7 +26,9 @@ import AddAssignment from "./AddAssignment";
 import EditAssignment from "./EditAssignment";
 import Logout from "./Logout";
 import CalendarView from "./CalendarView";
+import SortByPriority from "./SortByPriority";
 import { useNavigate } from "react-router-dom";
+import { Chip } from "@mui/material";
 
 const locales = { "en-US": enUS };
 const localizer = dateFnsLocalizer({
@@ -38,6 +41,8 @@ const localizer = dateFnsLocalizer({
 
 const HomeworkDashboard = () => {
   const [assignments, setAssignments] = useState([]); // Assignments state
+  const [filteredAssignments, setFilteredAssignments] = useState([]); // Filtered by priority
+  // const [priority, setPriority] = useState("All"); // Priority filter state
   const [events, setEvents] = useState([]); // Calendar events
   const [user, setUser] = useState(null); // User state
   const [view, setView] = useState("list"); // 'list' or 'calendar'
@@ -46,6 +51,7 @@ const HomeworkDashboard = () => {
   const [selectedAssignment, setSelectedAssignment] = useState(null); // Selected assignment for editing
   const [dueDates, setDueDates] = useState([]);
   const navigate = useNavigate();
+  const [priority, setPriority] = useState("All");
 
   const fetchUser = async () => {
     const sessionKey = localStorage.getItem("sessionKey");
@@ -81,17 +87,19 @@ const HomeworkDashboard = () => {
 
   const fetchAssignments = async (userId) => {
     try {
-      const response = await fetch(
-        `http://localhost:8001/homework/user/${userId}`,
-        {
-          headers: {
-            "Session-Key": localStorage.getItem("sessionKey"),
-          },
-        }
-      );
+      const url =
+        priority === "All"
+          ? `http://localhost:8001/homework/user/${userId}`
+          : `http://localhost:8001/homework/priority/${priority}`;
+      const response = await fetch(url, {
+        headers: {
+          "Session-Key": localStorage.getItem("sessionKey"),
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setAssignments(data.homework || []);
+        setFilteredAssignments(data.homework || []);
         const calendarEvents = data.homework.map((hw) => ({
           title: hw.title,
           start: new Date(hw.due_date),
@@ -117,15 +125,35 @@ const HomeworkDashboard = () => {
           },
         }
       );
+
       if (response.ok) {
         const { due_dates } = await response.json();
-        setDueDates(due_dates || []);
-        console.log("Due dates fetched:", due_dates); // Debug log
+
+        // Enrich dueDates with priority from assignments
+        const enrichedDueDates = due_dates.map((dueDate) => {
+          const matchingAssignment = assignments.find(
+            (assignment) => assignment.homework_id === dueDate.homework_id
+          );
+          return {
+            ...dueDate,
+            priority: matchingAssignment?.priority || "unknown", // Map priority or default to unknown
+          };
+        });
+
+        console.log("Enriched Due Dates:", enrichedDueDates);
+        setDueDates(enrichedDueDates);
       } else {
         console.error("Failed to fetch due dates:", response.statusText);
       }
     } catch (error) {
       console.error("Error fetching due dates:", error);
+    }
+  };
+
+  const handleViewChange = (viewType) => {
+    setView(viewType);
+    if (viewType === "calendar" && user) {
+      fetchDueDates(user.user_id); // Ensure due dates are refreshed when switching to calendar
     }
   };
 
@@ -196,50 +224,137 @@ const HomeworkDashboard = () => {
 
   useEffect(() => {
     if (user) {
-      fetchAssignments(user.user_id);
-      fetchDueDates(user.user_id); // Fetch assignments after user details are loaded
+      fetchAssignments(user.user_id, priority);
+    }
+  }, [user, priority]);
+
+  useEffect(() => {
+    if (user) {
+      fetchDueDates(user.user_id); // Fetch due dates for the calendar
     }
   }, [user]);
+
+  // Update filtered assignments when priority changes
+  // useEffect(() => {
+  //   if (priority === "All") {
+  //     setFilteredAssignments(assignments);
+  //   } else {
+  //     setFilteredAssignments(
+  //       assignments.filter((a) => a.priority === priority)
+  //     );
+  //   }
+  // }, [priority, assignments]);
+
+  const getPriorityChip = (priority) => {
+    if (!priority) {
+      console.warn("Priority missing or invalid, defaulting to Unknown");
+      return <Chip label="Unknown" variant="outlined" />;
+    }
+
+    // Normalize priority values
+    const normalizedPriority = priority.toLowerCase();
+
+    switch (normalizedPriority) {
+      case "high":
+        return (
+          <Chip
+            label="High"
+            color="error"
+            sx={{
+              fontWeight: "bold",
+              fontSize: "1rem",
+              color: "red",
+              backgroundColor: "#ffcccc",
+              border: "1px solid red",
+              boxShadow: "0px 0px 10px rgba(255, 0, 0, 0.5)",
+            }}
+          />
+        );
+      case "normal": // Handle "Normal" as "Medium"
+      case "medium":
+        return (
+          <Chip
+            label="Medium"
+            color="warning"
+            sx={{
+              fontWeight: "bold",
+              fontSize: "1rem",
+              color: "orange",
+              backgroundColor: "#ffeaa7",
+              border: "1px solid orange",
+              boxShadow: "0px 0px 10px rgba(255, 165, 0, 0.5)",
+            }}
+          />
+        );
+      case "low":
+        return (
+          <Chip
+            label="Low"
+            color="success"
+            sx={{
+              fontWeight: "bold",
+              fontSize: "1rem",
+              color: "green",
+              backgroundColor: "#ccffcc",
+              border: "1px solid green",
+              boxShadow: "0px 0px 10px rgba(0, 255, 0, 0.5)",
+            }}
+          />
+        );
+      default:
+        console.warn(`Unexpected priority value: ${priority}`);
+        return <Chip label="Unknown" variant="outlined" />;
+    }
+  };
 
   if (!user) {
     return <Typography>Loading...</Typography>;
   }
 
   return (
-    <Box sx={{ padding: 3, maxWidth: "1200px", margin: "auto" }}>
+    <Box className="dashboard-container">
       {/* Header Section */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 3,
-        }}
-      >
-        <Typography variant="h4" fontWeight="bold">
-          My Homework Dashboard
-        </Typography>
-        <Box>
+      <Box className="dashboard-header">
+        <Box className="dashboard-header-left">
+          <img
+            src="https://www.rit.edu/brandportal/sites/rit.edu.brandportal/files/2022-10/RIT-00071A_RGB_whiteTM.jpg"
+            alt="Homework Tracker Logo"
+            className="dashboard-logo"
+          />
+          <Typography
+            className="dashboard-title"
+            variant="h4"
+            fontWeight="bold"
+          >
+            My Homework Dashboard
+          </Typography>
+        </Box>
+        <Box className="dashboard-actions">
           <Button
+            className={`dashboard-button ${
+              view === "list" ? "button-active" : "button-inactive"
+            }`}
             variant={view === "list" ? "contained" : "outlined"}
             startIcon={<List />}
-            sx={{ marginRight: 1 }}
             onClick={() => setView("list")}
           >
             List View
           </Button>
           <Button
+            className={`dashboard-button ${
+              view === "calendar" ? "button-active" : "button-inactive"
+            }`}
             variant={view === "calendar" ? "contained" : "outlined"}
             startIcon={<CalendarToday />}
-            onClick={() => setView("calendar")}
+            onClick={() => handleViewChange("calendar")}
           >
             Calendar View
           </Button>
           <Button
+            className="add-assignment-button"
             variant="contained"
             color="primary"
             startIcon={<Add />}
-            sx={{ marginLeft: 1 }}
             onClick={() => setAddModalOpen(true)}
           >
             Add Assignment
@@ -249,18 +364,29 @@ const HomeworkDashboard = () => {
       </Box>
 
       {/* Calendar View */}
-      {view === "calendar" && <CalendarView dueDates={dueDates} />}
+      {view === "calendar" && (
+        <CalendarView className="calendar-view" dueDates={dueDates} />
+      )}
+
+      {/* Sort By Priority */}
+      {view === "list" && (
+        <Box className="sort-priority-container">
+          <SortByPriority priority={priority} setPriority={setPriority} />
+        </Box>
+      )}
 
       {/* List View */}
       {view === "list" && (
         <>
           {/* Stats Overview */}
-          <Grid container spacing={2} marginBottom={3}>
+          <Grid className="stats-overview" container spacing={2}>
             <Grid item xs={12} sm={6} md={3}>
-              <Card>
+              <Card className="stats-card">
                 <CardHeader title="Total Assignments" />
                 <CardContent>
-                  <Typography variant="h5">{assignments.length}</Typography>
+                  <Typography className="stats-value" variant="h5">
+                    {assignments.length}
+                  </Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -271,24 +397,38 @@ const HomeworkDashboard = () => {
             assignments.map((assignment) => (
               <Card
                 key={assignment.homework_id}
-                sx={{
-                  marginBottom: 2,
-                  textDecoration: assignment.is_completed
-                    ? "line-through"
-                    : "none",
-                }}
+                className={`assignment-card ${
+                  assignment.is_completed ? "assignment-completed" : ""
+                }`}
+                sx={{ marginBottom: 2 }}
               >
                 <CardContent>
-                  <Typography variant="h6">{assignment.title}</Typography>
-                  <Typography variant="body2">
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: 1,
+                    }}
+                  >
+                    <Typography className="assignment-title" variant="h6">
+                      {assignment.title}
+                    </Typography>
+                    {getPriorityChip(assignment.priority)}
+                  </Box>
+                  <Typography
+                    className="assignment-description"
+                    variant="body2"
+                  >
                     {assignment.description}
                   </Typography>
-                  <Typography variant="caption">
+                  <Typography className="assignment-due-date" variant="caption">
                     Due: {assignment.due_date}
                   </Typography>
-                  <Box sx={{ display: "flex", gap: 1, marginTop: 1 }}>
+                  <Box className="assignment-actions" sx={{ marginTop: 1 }}>
                     {!assignment.is_completed && (
                       <Button
+                        className="mark-completed-button"
                         startIcon={<CheckCircle />}
                         color="success"
                         onClick={() =>
@@ -299,12 +439,14 @@ const HomeworkDashboard = () => {
                       </Button>
                     )}
                     <Button
+                      className="edit-button"
                       startIcon={<Edit />}
                       onClick={() => handleEditAssignment(assignment)}
                     >
                       Edit
                     </Button>
                     <Button
+                      className="delete-button"
                       startIcon={<Delete />}
                       color="error"
                       onClick={() =>
@@ -318,7 +460,9 @@ const HomeworkDashboard = () => {
               </Card>
             ))
           ) : (
-            <Alert severity="info">No assignments found.</Alert>
+            <Alert className="no-assignments-alert" severity="info">
+              No assignments found.
+            </Alert>
           )}
         </>
       )}
@@ -329,11 +473,12 @@ const HomeworkDashboard = () => {
         onClose={() => setAddModalOpen(false)}
         onSubmit={() => {
           if (user) {
-            fetchAssignments(user.user_id); // Refresh assignments list after adding
+            fetchAssignments(user.user_id, priority);
+            fetchDueDates(user.user_id);
           }
         }}
-        sessionKey={localStorage.getItem("sessionKey")} // Pass session key
-        userId={user.user_id} // Pass user ID
+        sessionKey={localStorage.getItem("sessionKey")}
+        userId={user.user_id}
       />
 
       {/* Edit Assignment Modal */}

@@ -387,3 +387,42 @@ def get_due_dates_from_db(user_id):
         return result
     except Exception as e:
         raise Exception(f"Error fetching due dates: {e}")
+
+def get_homework_by_priority(user_id, priority):
+    """
+    Fetch homework for a user filtered by priority.
+
+    Args:
+        user_id (int): ID of the user.
+        priority (str): Priority level ('High', 'Normal', 'Low').
+
+    Returns:
+        list[dict]: A list of homework matching the priority level.
+    """
+    try:
+        conn = connect()
+        cur = conn.cursor()
+        query = """
+        SELECT homework_id, title, description, due_date, priority, is_completed
+        FROM homework
+        WHERE user_id = %s AND priority = %s
+        """
+        cur.execute(query, (user_id, priority))
+        homework = cur.fetchall()
+        conn.close()
+
+        # Format the result into a list of dictionaries
+        result = [
+            {
+                "homework_id": hw[0],
+                "title": hw[1],
+                "description": hw[2],
+                "due_date": hw[3].isoformat() if hw[3] else None,
+                "priority": hw[4],
+                "is_completed": hw[5],
+            }
+            for hw in homework
+        ]
+        return result
+    except Exception as e:
+        raise Exception(f"Error fetching homework by priority: {e}")
