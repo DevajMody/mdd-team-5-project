@@ -28,6 +28,7 @@ import Logout from "./Logout";
 import CalendarView from "./CalendarView";
 import SortByPriority from "./SortByPriority";
 import { useNavigate } from "react-router-dom";
+import { Chip } from "@mui/material";
 
 const locales = { "en-US": enUS };
 const localizer = dateFnsLocalizer({
@@ -124,10 +125,23 @@ const HomeworkDashboard = () => {
           },
         }
       );
+
       if (response.ok) {
         const { due_dates } = await response.json();
-        setDueDates(due_dates || []);
-        console.log("Due dates fetched:", due_dates); // Debug log
+
+        // Enrich dueDates with priority from assignments
+        const enrichedDueDates = due_dates.map((dueDate) => {
+          const matchingAssignment = assignments.find(
+            (assignment) => assignment.homework_id === dueDate.homework_id
+          );
+          return {
+            ...dueDate,
+            priority: matchingAssignment?.priority || "unknown", // Map priority or default to unknown
+          };
+        });
+
+        console.log("Enriched Due Dates:", enrichedDueDates);
+        setDueDates(enrichedDueDates);
       } else {
         console.error("Failed to fetch due dates:", response.statusText);
       }
@@ -231,6 +245,68 @@ const HomeworkDashboard = () => {
   //   }
   // }, [priority, assignments]);
 
+  const getPriorityChip = (priority) => {
+    if (!priority) {
+      console.warn("Priority missing or invalid, defaulting to Unknown");
+      return <Chip label="Unknown" variant="outlined" />;
+    }
+
+    // Normalize priority values
+    const normalizedPriority = priority.toLowerCase();
+
+    switch (normalizedPriority) {
+      case "high":
+        return (
+          <Chip
+            label="High"
+            color="error"
+            sx={{
+              fontWeight: "bold",
+              fontSize: "1rem",
+              color: "red",
+              backgroundColor: "#ffcccc",
+              border: "1px solid red",
+              boxShadow: "0px 0px 10px rgba(255, 0, 0, 0.5)",
+            }}
+          />
+        );
+      case "normal": // Handle "Normal" as "Medium"
+      case "medium":
+        return (
+          <Chip
+            label="Medium"
+            color="warning"
+            sx={{
+              fontWeight: "bold",
+              fontSize: "1rem",
+              color: "orange",
+              backgroundColor: "#ffeaa7",
+              border: "1px solid orange",
+              boxShadow: "0px 0px 10px rgba(255, 165, 0, 0.5)",
+            }}
+          />
+        );
+      case "low":
+        return (
+          <Chip
+            label="Low"
+            color="success"
+            sx={{
+              fontWeight: "bold",
+              fontSize: "1rem",
+              color: "green",
+              backgroundColor: "#ccffcc",
+              border: "1px solid green",
+              boxShadow: "0px 0px 10px rgba(0, 255, 0, 0.5)",
+            }}
+          />
+        );
+      default:
+        console.warn(`Unexpected priority value: ${priority}`);
+        return <Chip label="Unknown" variant="outlined" />;
+    }
+  };
+
   if (!user) {
     return <Typography>Loading...</Typography>;
   }
@@ -324,11 +400,22 @@ const HomeworkDashboard = () => {
                 className={`assignment-card ${
                   assignment.is_completed ? "assignment-completed" : ""
                 }`}
+                sx={{ marginBottom: 2 }}
               >
                 <CardContent>
-                  <Typography className="assignment-title" variant="h6">
-                    {assignment.title}
-                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: 1,
+                    }}
+                  >
+                    <Typography className="assignment-title" variant="h6">
+                      {assignment.title}
+                    </Typography>
+                    {getPriorityChip(assignment.priority)}
+                  </Box>
                   <Typography
                     className="assignment-description"
                     variant="body2"
@@ -338,7 +425,7 @@ const HomeworkDashboard = () => {
                   <Typography className="assignment-due-date" variant="caption">
                     Due: {assignment.due_date}
                   </Typography>
-                  <Box className="assignment-actions">
+                  <Box className="assignment-actions" sx={{ marginTop: 1 }}>
                     {!assignment.is_completed && (
                       <Button
                         className="mark-completed-button"
@@ -351,7 +438,11 @@ const HomeworkDashboard = () => {
                         Mark as Completed
                       </Button>
                     )}
-                    <Button className="edit-button" startIcon={<Edit />}>
+                    <Button
+                      className="edit-button"
+                      startIcon={<Edit />}
+                      onClick={() => handleEditAssignment(assignment)}
+                    >
                       Edit
                     </Button>
                     <Button

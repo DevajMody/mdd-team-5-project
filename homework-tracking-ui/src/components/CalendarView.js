@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -21,20 +21,40 @@ const CalendarView = ({ dueDates }) => {
     title: hw.title, // Extract title
     start: new Date(hw.due_date), // Use due_date as start date
     end: new Date(hw.due_date), // Use due_date as end date
+    priority: hw.priority || "unknown", // Include priority for styling
   }));
 
-  // Define event styles
+  // Update the eventStyleGetter function
   const eventStyleGetter = (event) => {
-    const style = {
-      backgroundColor: "#2196f3", // Blue background
-      borderRadius: "5px",
-      color: "white",
-      border: "0",
-      display: "block",
-      padding: "5px",
+    let backgroundColor;
+    switch (event.priority?.toLowerCase()) {
+      case "high":
+        backgroundColor = "#ffcccc"; // Light red
+        break;
+      case "medium":
+      case "normal": // Handle "Normal" as "Medium"
+        backgroundColor = "#ffeaa7"; // Light orange
+        break;
+      case "low":
+        backgroundColor = "#ccffcc"; // Light green
+        break;
+      default:
+        backgroundColor = "#d3d3d3"; // Default gray for unknown priority
+    }
+
+    return {
+      style: {
+        backgroundColor,
+        color: "black", // Ensure text is readable
+        borderRadius: "5px",
+        border: `1px solid ${backgroundColor}`,
+      },
     };
-    return { style };
   };
+
+  useEffect(() => {
+    console.log("calendarEvents:", calendarEvents);
+  }, [calendarEvents]);
 
   return (
     <Box sx={{ padding: 3 }}>
@@ -43,12 +63,11 @@ const CalendarView = ({ dueDates }) => {
       </Typography>
       <BigCalendar
         localizer={localizer}
-        events={calendarEvents}
+        events={calendarEvents} // Use the generated events
         startAccessor="start"
         endAccessor="end"
-        style={{ height: 500 }}
-        eventPropGetter={eventStyleGetter}
-        onSelectEvent={(event) => alert(`Homework: ${event.title}`)} // Optional click handler
+        style={{ height: 600, margin: "20px" }}
+        eventPropGetter={eventStyleGetter} // Apply dynamic styling
       />
     </Box>
   );
