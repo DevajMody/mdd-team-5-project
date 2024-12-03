@@ -86,6 +86,10 @@ const HomeworkDashboard = () => {
   };
 
   const fetchAssignments = async (userId) => {
+    if (!userId) {
+      console.error("Invalid user ID:", userId);
+      return;
+    }
     try {
       const url =
         priority === "All"
@@ -179,7 +183,11 @@ const HomeworkDashboard = () => {
 
       if (response.ok) {
         console.log("Homework marked as completed.");
-        fetchAssignments(user.user_id); // Refresh assignments after updating
+        // Fetch assignments and due dates to refresh UI
+        if (user) {
+          await fetchAssignments(user.user_id);
+          await fetchDueDates(user.user_id);
+        }
       } else {
         const errorMsg = await response.text();
         console.error("Failed to mark homework as completed:", errorMsg);
@@ -400,7 +408,12 @@ const HomeworkDashboard = () => {
                 className={`assignment-card ${
                   assignment.is_completed ? "assignment-completed" : ""
                 }`}
-                sx={{ marginBottom: 2 }}
+                sx={{
+                  marginBottom: 2,
+                  textDecoration: assignment.is_completed
+                    ? "line-through"
+                    : "none",
+                }}
               >
                 <CardContent>
                   <Box
@@ -486,7 +499,12 @@ const HomeworkDashboard = () => {
         <EditAssignment
           open={isEditModalOpen}
           onClose={() => setEditModalOpen(false)}
-          onSubmit={fetchAssignments}
+          onSubmit={() => {
+            if (user) {
+              fetchAssignments(user.user_id); // Refresh assignments after edit
+              fetchDueDates(user.user_id); // Refresh due dates for the calendar
+            }
+          }}
           sessionKey={localStorage.getItem("sessionKey")}
           homework={selectedAssignment}
         />
