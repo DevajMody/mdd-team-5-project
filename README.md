@@ -196,5 +196,9 @@ Admin-related use case:
 
 ![Tests Coverage](test_cov.png)
 
+### Demo Video
+https://github.com/user-attachments/assets/6a48b464-43e8-4e36-a060-ec794c663fa4
+
+
 ### License
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
