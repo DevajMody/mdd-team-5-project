@@ -195,3 +195,6 @@ Admin-related use case:
 ### Test Coveerage 
 
 ![Tests Coverage](test_cov.png)
+
+### License
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
