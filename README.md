@@ -1,4 +1,6 @@
 # PROJECT Design Documentation
+### License
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ## Team Information
 
@@ -202,8 +204,8 @@ https://github.com/user-attachments/assets/6a48b464-43e8-4e36-a060-ec794c663fa4
 ### Installation Requirements
   -**Backend**
     Language - Python
-    Framework - flask
-    Dabase - postgreSQL
+    Framework - Flask
+    Database - postgreSQL
 
   -**Frontend** 
     Language - HTML , CSS, Java
@@ -211,5 +213,4 @@ https://github.com/user-attachments/assets/6a48b464-43e8-4e36-a060-ec794c663fa4
     Design - Multipage
 
 
-### License
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
