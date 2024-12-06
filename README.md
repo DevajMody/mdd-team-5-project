@@ -2,14 +2,6 @@
 ### License
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-## Team Information
-
-- Team name: TEAMNAME
-- Team members
-  - Uzair Mukadam (umm7905)
-  - Jahnavi Kaja (jk4266)
-  - Devaj Mody (dm9395)
-  - Shridhar Vilas Shinde (ss7536)
 
 ## Executive Summary
 
